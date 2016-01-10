@@ -25,266 +25,120 @@
 	\author
 	Created			: Adam Smith
 	Last modified	: Adam Smith
-	\version 1.0
 	\date
 	Created			: 3rd December 2015
-	Last Modified	: 3rd December 2015
+	Last Modified	: 10th January 2015
 */
 
-#include "Iterator.hpp"
+#include "Solaire/Core/Iterator.hpp"
+#include "Solaire/Core/Allocator.hpp"
 
 namespace Solaire {
 
-	class Allocator;
+	template<class T>
+	SOLAIRE_EXPORT_INTERFACE StaticContainer {
+    public:
+        typedef T Type;
+        typedef T* Pointer;
+        typedef T& Reference;
+        typedef const T* ConstPointer;
+        typedef const T& ConstReference;
+    protected:
+        virtual Pointer SOLAIRE_EXPORT_CALL GetPtr(int32_t) throw() = 0;
+        virtual SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL Begin() throw() = 0;
+        virtual SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL End() throw() = 0;
+        virtual SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL Rbegin() throw() = 0;
+        virtual SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL Rend() throw() = 0;
+    public:
+        virtual SOLAIRE_EXPORT_CALL ~StaticContainer() throw() {}
+
+        virtual bool SOLAIRE_EXPORT_CALL IsContiguous() const throw() = 0;
+        virtual int32_t SOLAIRE_EXPORT_CALL Size() const throw() = 0;
+        virtual Allocator& SOLAIRE_EXPORT_CALL GetAllocator() const throw() = 0;
+
+        SOLAIRE_FORCE_INLINE Reference operator[](const int32_t aIndex) throw() {
+            return *GetPtr(aIndex);
+        }
+
+        SOLAIRE_FORCE_INLINE ConstReference operator[](const int32_t aIndex) const throw() {
+            return *const_cast<StaticContainer<T>*>(this)->GetPtr(aIndex);
+        }
+
+        SOLAIRE_FORCE_INLINE STLIterator<T> begin() throw() {
+            return STLIterator<T>(Begin());
+        }
+
+        SOLAIRE_FORCE_INLINE STLIterator<T> end() throw() {
+            return STLIterator<T>(End());
+        }
+
+        SOLAIRE_FORCE_INLINE STLIterator<const T> begin() const throw() {
+            return STLIterator<T>(const_cast<StaticContainer<T>*>(this)->Begin());
+        }
+
+        SOLAIRE_FORCE_INLINE STLIterator<const T> end() const throw() {
+            return STLIterator<T>(const_cast<StaticContainer<T>*>(this)->End());
+        }
+
+        SOLAIRE_FORCE_INLINE STLIterator<T> rbegin() throw() {
+            return STLIterator<T>(Rbegin());
+        }
+
+        SOLAIRE_FORCE_INLINE STLIterator<T> rend() throw() {
+            return STLIterator<T>(Rend());
+        }
+
+        SOLAIRE_FORCE_INLINE STLIterator<const T> rbegin() const throw() {
+            return STLIterator<T>(const_cast<StaticContainer<T>*>(this)->Rbegin());
+        }
+
+        SOLAIRE_FORCE_INLINE STLIterator<const T> rend() const throw() {
+            return STLIterator<T>(const_cast<StaticContainer<T>*>(this)->Rend());
+        }
+	};
 
 	template<class T>
-	class ContainerIterator : public Iterator<T>{
-	private:
-		Iterator<T>* mIterator;
-		uint32_t mOffset;
-	protected:
-		//Inherited from Iterator
-		Offset SOLAIRE_EXPORT_CALL GetOffset() const throw() override{
-			return mOffset;
-		}
+	SOLAIRE_EXPORT_INTERFACE Stack : public StaticContainer<T> {
 	public:
-		ContainerIterator(Iterator<T>& aIterator, uint32_t aOffset = 0) :
-			mIterator(&aIterator),
-			mOffset(aOffset)
-		{}
+		virtual  SOLAIRE_EXPORT_CALL ~Stack() throw() {}
+		virtual T& SOLAIRE_EXPORT_CALL PushBack(const T&) throw() = 0;
+		virtual T SOLAIRE_EXPORT_CALL PopBack() throw() = 0;
+		virtual void SOLAIRE_EXPORT_CALL Clear() throw() = 0;
 
-		SOLAIRE_EXPORT_CALL ~ContainerIterator() {
-
+		SOLAIRE_FORCE_INLINE T& SOLAIRE_DEFAULT_CALL Back() throw() {
+			return operator[](StaticContainer<T>::Size() - 1);
 		}
 
-		// Inherited from Iterator
-
-		Type* SOLAIRE_EXPORT_CALL operator->() throw() override{
-			mIterator->operator+=(mOffset);
-			Type* const tmp = mIterator->operator->();
-			mIterator->operator-=(mOffset);
-			return tmp;
-		}
-
-		Iterator<Type>& SOLAIRE_EXPORT_CALL operator++() throw() override {
-			++mOffset;
-			return *this;
-		}
-
-		Iterator<Type>& SOLAIRE_EXPORT_CALL operator--() throw() override {
-			--mOffset;
-			return *this;
-		}
-
-		Iterator<Type>& SOLAIRE_EXPORT_CALL operator+=(const Offset aOffset) throw() override {
-			mOffset += aOffset;
-			return *this;
-		}
-
-		Iterator<Type>& SOLAIRE_EXPORT_CALL operator-=(const Offset aOffset) throw() override {
-			mOffset -= aOffset;
-			return *this;
+		SOLAIRE_FORCE_INLINE const T& SOLAIRE_DEFAULT_CALL Back() const throw() {
+			return operator[](StaticContainer<T>::Size() - 1);
 		}
 	};
 
 	template<class T>
-	class ContainerReverseIterator : public Iterator<T>{
-	private:
-		Iterator<T>* mIterator;
-		uint32_t mOffset;
-	protected:
-		//Inherited from Iterator
-		Offset SOLAIRE_EXPORT_CALL GetOffset() const throw() override{
-			return mOffset;
-		}
+	SOLAIRE_EXPORT_INTERFACE Deque : public Stack<T> {
 	public:
-		ContainerReverseIterator(Iterator<T>& aIterator, uint32_t aOffset = 0) :
-			mIterator(&aIterator),
-			mOffset(aOffset)
-		{}
+		virtual SOLAIRE_EXPORT_CALL ~Deque() throw() {}
 
-		SOLAIRE_EXPORT_CALL ~ContainerReverseIterator() {
+		virtual T& SOLAIRE_EXPORT_CALL PushFront(const T&) throw() = 0;
+		virtual T SOLAIRE_EXPORT_CALL PopFront() throw() = 0;
 
+		SOLAIRE_FORCE_INLINE T& SOLAIRE_DEFAULT_CALL Front() throw() {
+			return StaticContainer<T>::operator[](0);
 		}
 
-		// Inherited from Iterator
-
-		Type* SOLAIRE_EXPORT_CALL operator->() throw() override{
-			mIterator->operator+=(mOffset);
-			Type* const tmp = mIterator->operator->();
-			mIterator->operator-=(mOffset);
-			return tmp;
-		}
-
-		Iterator<Type>& SOLAIRE_EXPORT_CALL operator++() throw() override {
-			--mOffset;
-			return *this;
-		}
-
-		Iterator<Type>& SOLAIRE_EXPORT_CALL operator--() throw() override {
-			++mOffset;
-			return *this;
-		}
-
-		Iterator<Type>& SOLAIRE_EXPORT_CALL operator+=(const Offset aOffset) throw() override {
-			mOffset -= aOffset;
-			return *this;
-		}
-
-		Iterator<Type>& SOLAIRE_EXPORT_CALL operator-=(const Offset aOffset) throw() override {
-			mOffset += aOffset;
-			return *this;
-		}
-	};
-
-	template<class T, class ITERATOR>
-	class ContainerConstIterator : public Iterator<const T>{
-	private:
-		ITERATOR mIterator;
-	protected:
-		//Inherited from Iterator
-		Offset SOLAIRE_EXPORT_CALL GetOffset() const throw() override{
-			return mIterator.GetOffset();
-		}
-	public:
-		ContainerConstIterator(Iterator<T>& aIterator, const Offset aOffset = 0) :
-			ITERATOR(aIterator, aOffset)
-		{}
-
-		SOLAIRE_EXPORT_CALL ~ContainerConstIterator() {
-
-		}
-
-		// Inherited from Iterator
-
-		Type* SOLAIRE_EXPORT_CALL operator->() throw() override {
-			return mIterator.operator->();
-		}
-
-		Iterator<Type>& SOLAIRE_EXPORT_CALL operator++() throw() override {
-			++mIterator;
-			return *this;
-		}
-
-		Iterator<Type>& SOLAIRE_EXPORT_CALL operator--() throw() override {
-			--mIterator;
-			return *this;
-		}
-
-		Iterator<Type>& SOLAIRE_EXPORT_CALL operator+=(const Offset aOffset) throw() override {
-			mIterator += aOffset;
-			return *this;
-		}
-
-		Iterator<Type>& SOLAIRE_EXPORT_CALL operator-=(const Offset aOffset) throw() override {
-			mIterator -= aOffset;
-			return *this;
+		SOLAIRE_FORCE_INLINE const T& SOLAIRE_DEFAULT_CALL Front() const throw() {
+			return StaticContainer<T>::operator[](0);
 		}
 	};
 
 	template<class T>
-	SOLAIRE_EXPORT_INTERFACE FixedContainer {
+	SOLAIRE_EXPORT_INTERFACE List : public Deque<T> {
 	public:
-		typedef T Type;
-		typedef ContainerIterator<Type> Iterator;
-		typedef ContainerConstIterator<Type, Iterator> ConstIterator;
-		typedef ContainerReverseIterator<Type> ReverseIterator;
-		typedef ContainerConstIterator<Type, ReverseIterator> ConstReverseIterator;
-	public:
-		virtual uint32_t SOLAIRE_EXPORT_CALL Size() const = 0;
-		virtual Type& SOLAIRE_EXPORT_CALL operator[](const uint32_t) = 0;
-		virtual bool SOLAIRE_EXPORT_CALL IsContiguous() const = 0;
-		virtual Allocator& SOLAIRE_EXPORT_CALL GetAllocator() const = 0;
-		virtual bool SOLAIRE_EXPORT_CALL Reserve(const uint32_t) = 0;
-		virtual Solaire::Iterator<T>& SOLAIRE_EXPORT_CALL GetBeginIterator() = 0;
-		virtual SOLAIRE_EXPORT_CALL ~FixedContainer(){}
+		virtual SOLAIRE_EXPORT_CALL ~List() throw() {}
 
-		SOLAIRE_FORCE_INLINE const Type& SOLAIRE_DEFAULT_CALL operator[](const uint32_t aIndex) const {
-			return const_cast<FixedContainer<T>*>(this)->operator[](aIndex);
-		}
-
-		SOLAIRE_FORCE_INLINE T* SOLAIRE_DEFAULT_CALL GetPtr() {
-			return IsContiguous() ? &operator[](0) : nullptr;
-		}
-
-		SOLAIRE_FORCE_INLINE const T* SOLAIRE_DEFAULT_CALL GetPtr() const {
-			return IsContiguous() ? &operator[](0) : nullptr;
-		}
-
-		SOLAIRE_FORCE_INLINE Iterator SOLAIRE_DEFAULT_CALL begin() {
-			return Iterator(GetBeginIterator(), 0);
-		}
-
-		SOLAIRE_FORCE_INLINE Iterator SOLAIRE_DEFAULT_CALL end() {
-			return Iterator(GetBeginIterator(), Size());
-		}
-
-		SOLAIRE_FORCE_INLINE ConstIterator SOLAIRE_DEFAULT_CALL begin() const {
-			return ContainerConstIterator<T>(const_cast<FixedContainer<T>*>(this)->GetBeginIterator(), 0);
-		}
-
-		SOLAIRE_FORCE_INLINE ConstIterator SOLAIRE_DEFAULT_CALL end() const {
-			return ContainerConstIterator<T>(const_cast<FixedContainer<T>*>(this)->GetBeginIterator(), Size());
-		}
-
-		SOLAIRE_FORCE_INLINE ReverseIterator SOLAIRE_DEFAULT_CALL rbegin() {
-			return ReverseIterator(GetBeginIterator(), Size() - 1);
-		}
-
-		SOLAIRE_FORCE_INLINE ReverseIterator SOLAIRE_DEFAULT_CALL rend() {
-			return ReverseIterator(GetBeginIterator(), -1);
-		}
-
-		SOLAIRE_FORCE_INLINE ConstReverseIterator SOLAIRE_DEFAULT_CALL rbegin() const {
-			return ReverseIterator(const_cast<FixedContainer<T>*>(this)->GetBeginIterator(), Size() - 1);
-		}
-
-		SOLAIRE_FORCE_INLINE ConstReverseIterator SOLAIRE_DEFAULT_CALL rend() const {
-			return ReverseIterator(const_cast<FixedContainer<T>*>(this)->GetBeginIterator(), -1);
-		}
-	};
-
-	template<class T>
-	SOLAIRE_EXPORT_INTERFACE Stack : public FixedContainer<T> {
-	public:
-		virtual Type& SOLAIRE_EXPORT_CALL PushBack(const Type&) = 0;
-		virtual Type SOLAIRE_EXPORT_CALL PopBack() = 0;
-		virtual Stack<T>& SOLAIRE_EXPORT_CALL operator=(const FixedContainer<T>&) = 0;
-		virtual void SOLAIRE_EXPORT_CALL Clear() = 0;
-		virtual  SOLAIRE_EXPORT_CALL ~Stack(){}
-
-		SOLAIRE_FORCE_INLINE T& SOLAIRE_DEFAULT_CALL Back() {
-			return operator[](Size() - 1);
-		}
-
-		SOLAIRE_FORCE_INLINE const T& SOLAIRE_DEFAULT_CALL Back() const {
-			return operator[](Size() - 1);
-		}
-	};
-
-	template<class T>
-	SOLAIRE_EXPORT_INTERFACE DoubleEndedStack : public Stack<T> {
-	public:
-		virtual Type& SOLAIRE_EXPORT_CALL PushFront(const Type&) = 0;
-		virtual Type SOLAIRE_EXPORT_CALL PopFront() = 0;
-		virtual SOLAIRE_EXPORT_CALL ~DoubleEndedStack(){}
-
-		SOLAIRE_FORCE_INLINE T& SOLAIRE_DEFAULT_CALL Front() {
-			return operator[](0);
-		}
-
-		SOLAIRE_FORCE_INLINE const T& SOLAIRE_DEFAULT_CALL Front() const {
-			return operator[](0);
-		}
-	};
-
-	template<class T>
-	SOLAIRE_EXPORT_INTERFACE List : public DoubleEndedStack<T> {
-	public:
-		virtual Type& SOLAIRE_EXPORT_CALL InsertBefore(const ConstIterator, const Type&) = 0;
-		virtual Type& SOLAIRE_EXPORT_CALL InsertAfter(const ConstIterator, const Type&) = 0;
-		virtual bool SOLAIRE_EXPORT_CALL Erase(const ConstIterator) = 0;
-		virtual SOLAIRE_EXPORT_CALL ~List(){}
+		virtual T& SOLAIRE_EXPORT_CALL InsertBefore(const STLIterator<const T>, const T&) throw() = 0;
+		virtual T& SOLAIRE_EXPORT_CALL InsertAfter(const STLIterator<const T>, const T&) throw() = 0;
+		virtual bool SOLAIRE_EXPORT_CALL Erase(const STLIterator<const T>) throw() = 0;
 	};
 
 }

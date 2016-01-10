@@ -76,7 +76,7 @@ namespace Solaire {
 
         SharedAllocation<Iterator<T>> operator++(int) throw() {
             SharedAllocation<Iterator<T>> tmp = mIterator->Copy();
-            Increment(1);
+            mIterator->Increment(1);
             return STLIterator<T>(tmp);
         }
 
@@ -115,7 +115,7 @@ namespace Solaire {
 
         STLIterator<T> operator--(int) throw() {
             SharedAllocation<Iterator<T>> tmp = mIterator->Copy();
-            Decrement(1);
+            mIterator->Decrement(1);
             return STLIterator<T>(tmp);
         }
 
