@@ -39,129 +39,140 @@ namespace Solaire {
 	template<class T>
     SOLAIRE_EXPORT_INTERFACE Iterator {
     public:
+        virtual SOLAIRE_EXPORT_CALL ~Iterator() throw() {}
+
+        virtual Iterator<T>& SOLAIRE_EXPORT_CALL Increment(int32_t) throw() = 0;
+        virtual Iterator<T>& SOLAIRE_EXPORT_CALL Decrement(int32_t) throw() = 0;
+        virtual SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL Copy() const throw() = 0;
+        virtual int32_t SOLAIRE_EXPORT_CALL GetOffset() const throw() = 0;
+        virtual T* SOLAIRE_EXPORT_CALL GetPtr() throw() = 0;
+    };
+
+    template<class T>
+    class STLIterator {
+    public:
         typedef T Type;
         typedef T* Pointer;
         typedef T& Reference;
         typedef const T* ConstPointer;
         typedef const T& ConstReference;
-    protected:
-        virtual Iterator<T>& SOLAIRE_EXPORT_CALL Increment(int32_t) throw() = 0;
-        virtual Iterator<T>& SOLAIRE_EXPORT_CALL Decrement(int32_t) throw() = 0;
-        virtual SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL Copy() const throw() = 0;
-        virtual int32_t SOLAIRE_EXPORT_CALL GetOffset() const throw() = 0;
-        virtual Pointer SOLAIRE_EXPORT_CALL GetPtr() throw() = 0;
+    private:
+        SharedAllocation<Iterator<T>> mIterator;
     public:
-        virtual SOLAIRE_EXPORT_CALL ~Iterator(){}
+        STLIterator(SharedAllocation<Iterator<T>> aIterator) throw() :
+            mIterator(aIterator)
+        {}
 
-        // Iterator Type
-        virtual bool SOLAIRE_EXPORT_CALL IsInputIterator() const throw() = 0;
-        virtual bool SOLAIRE_EXPORT_CALL IsOutputIterator() const throw() = 0;
-        virtual bool SOLAIRE_EXPORT_CALL IsForwardIterator() const throw() = 0;
-        virtual bool SOLAIRE_EXPORT_CALL IsIterator() const throw() = 0;
-        virtual bool SOLAIRE_EXPORT_CALL IsRandomAccessIterator() const throw() = 0;
+        ~STLIterator() throw() {
+
+        }
 
         // Input Iterator
 
-        SOLAIRE_FORCE_INLINE Iterator<T>& operator++() throw() {
-            return Increment(1);
+        STLIterator<T>& operator++() throw() {
+            mIterator->Increment(1);
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE SharedAllocation<Iterator<T>> operator++(int) throw() {
-            SharedAllocation<Iterator<T>> tmp = Copy();
-            tmp.Increment(1);
-            return tmp;
+        SharedAllocation<Iterator<T>> operator++(int) throw() {
+            SharedAllocation<Iterator<T>> tmp = mIterator->Copy();
+            Increment(1);
+            return STLIterator<T>(tmp);
         }
 
-        SOLAIRE_FORCE_INLINE bool operator==(const Iterator<T>& aOther) const throw() {
-            return aOther.GetOffset() == GetOffset();
+        bool operator==(const STLIterator<T> aOther) const throw() {
+            return aOther.mIterator->GetOffset() == mIterator->GetOffset();
         }
 
-        SOLAIRE_FORCE_INLINE bool operator!=(const Iterator<T>& aOther) const throw() {
-            return aOther.GetOffset() != GetOffset();
+        bool operator!=(const STLIterator<T> aOther) const throw() {
+            return aOther.mIterator->GetOffset() != mIterator->GetOffset();
         }
 
-        SOLAIRE_FORCE_INLINE ConstReference operator*() const throw() {
-            return *const_cast<Iterator<T>*>(this)->GetPtr();
+        ConstReference operator*() const throw() {
+            return *const_cast<STLIterator<T>*>(this)->mIterator->GetPtr();
         }
 
-        SOLAIRE_FORCE_INLINE ConstPointer operator->() const throw() {
-            return const_cast<Iterator<T>*>(this)->GetPtr();
+        ConstPointer operator->() const throw() {
+            return const_cast<STLIterator<T>*>(this)->mIterator->GetPtr();
         }
 
         // Output Iterator
 
-        SOLAIRE_FORCE_INLINE Reference operator*() throw() {
-            return GetPtr();
+        Reference operator*() throw() {
+            return mIterator->GetPtr();
         }
 
-        SOLAIRE_FORCE_INLINE Pointer operator->() throw() {
-            return GetPtr();
+        Pointer operator->() throw() {
+            return mIterator->GetPtr();
         }
 
         // Bidirectional Iterator
 
-        SOLAIRE_FORCE_INLINE Iterator<T>& operator--() throw() {
-            return Decrement(1);
+        STLIterator<T>& operator--() throw() {
+            mIterator->Decrement(1);
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE SharedAllocation<Iterator<T>> operator--(int) throw() {
-            SharedAllocation<Iterator<T>> tmp = Copy();
-            tmp.Decrement(1);
-            return tmp;
+        STLIterator<T> operator--(int) throw() {
+            SharedAllocation<Iterator<T>> tmp = mIterator->Copy();
+            Decrement(1);
+            return STLIterator<T>(tmp);
         }
 
         // Random Access Iterator
 
-        SOLAIRE_FORCE_INLINE Iterator<T>& operator+=(const int32_t aCount) throw() {
-            return Increment(aCount);
+        STLIterator<T>& operator+=(const int32_t aCount) throw() {
+            mIterator->Increment(aCount);
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE SharedAllocation<Iterator<T>> operator+(const int32_t aCount) throw() {
-            SharedAllocation<Iterator<T>> tmp = Copy();
+        STLIterator<T> operator+(const int32_t aCount) throw() {
+            SharedAllocation<Iterator<T>> tmp = mIterator->Copy();
             tmp.Increment(aCount);
-            return tmp;
+            return STLIterator(tmp);
         }
 
-        SOLAIRE_FORCE_INLINE SharedAllocation<const Iterator<T>> operator+(const int32_t aCount) const throw() {
-            SharedAllocation<Iterator<T>> tmp = Copy();
-            tmp.Increment(aCount);
-            return tmp;
+        STLIterator<T>& operator-=(const int32_t aCount) throw() {
+            mIterator->Decrement(aCount);
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE Iterator<T>& operator-=(const int32_t aCount) throw() {
-            return Decrement(aCount);
-        }
-
-        SOLAIRE_FORCE_INLINE SharedAllocation<Iterator<T>> operator-(const int32_t aCount) throw() {
-            SharedAllocation<Iterator<T>> tmp = Copy();
+        STLIterator<T> operator-(const int32_t aCount) throw() {
+            SharedAllocation<Iterator<T>> tmp = mIterator->Copy();
             tmp.Decrement(aCount);
-            return tmp;
+            return STLIterator(tmp);
         }
 
-        SOLAIRE_FORCE_INLINE SharedAllocation<const Iterator<T>> operator-(const int32_t aCount) const throw() {
-            SharedAllocation<Iterator<T>> tmp = Copy();
-            tmp.Decrement(aCount);
-            return tmp;
+        int32_t operator-(const STLIterator<T>&aOther) const throw() {
+            return mIterator->GetOffset() - aOther.mIterator->GetOffset();
         }
 
-        SOLAIRE_FORCE_INLINE int32_t operator-(const Iterator<T>& aOther) const throw() {
-            return GetOffset() - aOther.GetOffset();
+        Reference operator[](const int32_t aOffset) throw() {
+            SharedAllocation<Iterator<T>> tmp = mIterator->Copy();
+            tmp.Increment(aOffset);
+            return **tmp;
         }
 
-        SOLAIRE_FORCE_INLINE bool operator<(const Iterator<T>& aOther) const throw() {
-            return aOther.GetOffset() < GetOffset();
+        ConstReference operator[](const int32_t aOffset) const throw() {
+            SharedAllocation<Iterator<T>> tmp = mIterator->Copy();
+            tmp.Increment(aOffset);
+            return **tmp;
         }
 
-        SOLAIRE_FORCE_INLINE bool operator>(const Iterator<T>& aOther) const throw() {
-            return aOther.GetOffset() > GetOffset();
+        bool operator<(const STLIterator<T> aOther) const throw() {
+            return aOther.mIterator->GetOffset() < mIterator->GetOffset();
         }
 
-        SOLAIRE_FORCE_INLINE bool operator<=(const Iterator<T>& aOther) const throw() {
-            return aOther.GetOffset() <= GetOffset();
+        bool operator>(const STLIterator<T> aOther) const throw() {
+            return aOther.mIterator->GetOffset() > mIterator->GetOffset();
         }
 
-        SOLAIRE_FORCE_INLINE bool operator>=(const Iterator<T>& aOther) const throw() {
-            return aOther.GetOffset() >= GetOffset();
+        bool operator<=(const STLIterator<T> aOther) const throw() {
+            return aOther.mIterator->GetOffset() <= mIterator->GetOffset();
+        }
+
+        bool operator>=(const STLIterator<T> aOther) const throw() {
+            return aOther.mIterator->GetOffset() >= mIterator->GetOffset();
         }
     };
 }
