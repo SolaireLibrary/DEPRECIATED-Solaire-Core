@@ -258,7 +258,7 @@ namespace Solaire {
         \return The result of the operation.
     */
     static constexpr bool LogicalXnor(const bool aFirst, const bool aSecond) {
-        return ! ((aFirst || aSecond) && ! (aFirst && aSecond));
+        return (aFirst && aSecond) || ! (aFirst || aSecond);
     }
 }
 
