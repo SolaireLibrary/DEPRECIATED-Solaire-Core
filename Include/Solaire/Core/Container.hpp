@@ -27,7 +27,7 @@
 	Last modified	: Adam Smith
 	\date
 	Created			: 3rd December 2015
-	Last Modified	: 10th January 2015
+	Last Modified	: 10th January 2016
 */
 
 #include "Solaire/Core/Iterator.hpp"
