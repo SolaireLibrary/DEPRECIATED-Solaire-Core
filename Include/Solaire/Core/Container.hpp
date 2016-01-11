@@ -136,9 +136,9 @@ namespace Solaire {
 	public:
 		virtual SOLAIRE_EXPORT_CALL ~List() throw() {}
 
-		virtual T& SOLAIRE_EXPORT_CALL InsertBefore(const STLIterator<const T>, const T&) throw() = 0;
-		virtual T& SOLAIRE_EXPORT_CALL InsertAfter(const STLIterator<const T>, const T&) throw() = 0;
-		virtual bool SOLAIRE_EXPORT_CALL Erase(const STLIterator<const T>) throw() = 0;
+		virtual T& SOLAIRE_EXPORT_CALL InsertBefore(const int32_t, const T&) throw() = 0;
+		virtual T& SOLAIRE_EXPORT_CALL InsertAfter(const int32_t, const T&) throw() = 0;
+		virtual bool SOLAIRE_EXPORT_CALL Erase(const int32_t) throw() = 0;
 	};
 
 }

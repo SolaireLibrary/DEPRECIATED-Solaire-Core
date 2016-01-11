@@ -99,7 +99,7 @@ namespace Solaire {
         // Output Iterator
 
         Reference operator*() throw() {
-            return mIterator->GetPtr();
+            return *mIterator->GetPtr();
         }
 
         Pointer operator->() throw() {
