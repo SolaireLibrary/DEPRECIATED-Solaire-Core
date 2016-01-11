@@ -79,13 +79,15 @@ namespace Solaire {
 		{}
 
 		SharedAllocation(AllocatorI& aAllocator, T* const aObject) throw() :
-			mObject(static_cast<SharedObject<T>>(new(aAllocator.Allocate(sizeof(SharedObject<T>))) SharedObject<T>(aAllocator, aObject)))
-		{}
+			mObject(new(aAllocator.Allocate(sizeof(SharedObject<T>))) SharedObject<T>(aAllocator, aObject))
+		{
+		    ++mObject->Count;
+		}
 
 		SharedAllocation(const SharedAllocation<T>& aOther) throw() :
 			mObject(aOther.mObject)
 		{
-			if(mObject) ++mObject->Object;
+			if(mObject) ++mObject->Count;
 		}
 
 		SharedAllocation(SharedAllocation<T>&& aOther) throw() :
@@ -94,7 +96,7 @@ namespace Solaire {
 			aOther.mObject = nullptr;
 		}
 
-		template<class T2>
+		/*template<class T2>
 		SharedAllocation(const SharedAllocation<T2>& aOther) throw() :
 			mObject(aOther.mObject)
 		{
@@ -106,7 +108,7 @@ namespace Solaire {
 			mObject(aOther.mObject)
 		{
 			aOther.mObject = nullptr;
-		}
+		}*/
 
 		~SharedAllocation() throw() {
 			DeleteObject();
