@@ -51,14 +51,14 @@ namespace Solaire {
 			\brief Return the total number of bytes that are currently allocated by this Allocator.
 			\return The number of bytes allocated.
 		*/
-        virtual SOLAIRE_DEFAULT_API uint32_t SOLAIRE_EXPORT_CALL GetAllocatedBytes() const throw() = 0;
+        virtual SOLAIRE_DEFAULT_API uint32_t SOLAIRE_EXPORT_CALL getAllocatedBytes() const throw() = 0;
 
 		/*!
 			\brief Return the total number of bytes that this Allocator has avalible for allocation.
 			\detail If the Allocator does not have an allocation limit, the returned value will be UINT32_MAX.
 			\return The number of unallocated bytes.
 		*/
-        virtual SOLAIRE_DEFAULT_API uint32_t SOLAIRE_EXPORT_CALL GetFreeBytes() const throw() = 0;
+        virtual SOLAIRE_DEFAULT_API uint32_t SOLAIRE_EXPORT_CALL getFreeBytes() const throw() = 0;
 
 		/*!
 			\brief Return the size of an allocated memory block.
@@ -66,7 +66,7 @@ namespace Solaire {
 			\param aObject The address of the allocation block to check.
 			\return The size of \a aObject 's block in bytes.
 		*/
-		virtual SOLAIRE_DEFAULT_API uint32_t SOLAIRE_EXPORT_CALL SizeOf(const void* const) throw() = 0;
+		virtual SOLAIRE_DEFAULT_API uint32_t SOLAIRE_EXPORT_CALL sizeOf(const void* const) throw() = 0;
 
 		/*!
 			\brief Allocate a block of memory.
@@ -74,7 +74,7 @@ namespace Solaire {
 			\return The starting address of the allocated block, or nullptr if the allocation failed.
 			\see Deallocate
 		*/
-        virtual SOLAIRE_DEFAULT_API void* SOLAIRE_EXPORT_CALL Allocate(const size_t) throw() = 0;
+        virtual SOLAIRE_DEFAULT_API void* SOLAIRE_EXPORT_CALL allocate(const size_t) throw() = 0;
 
 		/*!
 			\brief Deallocate a block of memory.
@@ -82,14 +82,14 @@ namespace Solaire {
 			\return True if the block was deallocated successfully.
 			\see Allocate
 		*/
-        virtual SOLAIRE_DEFAULT_API bool SOLAIRE_EXPORT_CALL Deallocate(const void* const) throw() = 0;
+        virtual SOLAIRE_DEFAULT_API bool SOLAIRE_EXPORT_CALL deallocate(const void* const) throw() = 0;
 
 		/*!
 			\brief Deallocated all blocks currently allocated by this Allocator.
 			\return True if all blocks were deallocated.
 			\see Deallocate
 		*/
-		virtual SOLAIRE_DEFAULT_API bool SOLAIRE_EXPORT_CALL DeallocateAll() throw() = 0;
+		virtual SOLAIRE_DEFAULT_API bool SOLAIRE_EXPORT_CALL deallocateAll() throw() = 0;
 
 		/*!
 			\brief Destroy the Allocator.

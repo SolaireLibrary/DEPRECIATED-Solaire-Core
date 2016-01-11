@@ -44,56 +44,56 @@ namespace Solaire {
         typedef const T* ConstPointer;
         typedef const T& ConstReference;
     protected:
-        virtual Pointer SOLAIRE_EXPORT_CALL GetPtr(int32_t) throw() = 0;
-        virtual SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL Begin() throw() = 0;
-        virtual SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL End() throw() = 0;
-        virtual SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL Rbegin() throw() = 0;
-        virtual SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL Rend() throw() = 0;
+        virtual Pointer SOLAIRE_EXPORT_CALL getPtr(int32_t) throw() = 0;
+        virtual SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL begin_() throw() = 0;
+        virtual SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL end_() throw() = 0;
+        virtual SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL rbegin_() throw() = 0;
+        virtual SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL rend_() throw() = 0;
     public:
         virtual SOLAIRE_EXPORT_CALL ~StaticContainer() throw() {}
 
-        virtual bool SOLAIRE_EXPORT_CALL IsContiguous() const throw() = 0;
-        virtual int32_t SOLAIRE_EXPORT_CALL Size() const throw() = 0;
-        virtual Allocator& SOLAIRE_EXPORT_CALL GetAllocator() const throw() = 0;
+        virtual bool SOLAIRE_EXPORT_CALL isContiguous() const throw() = 0;
+        virtual int32_t SOLAIRE_EXPORT_CALL size() const throw() = 0;
+        virtual Allocator& SOLAIRE_EXPORT_CALL getAllocator() const throw() = 0;
 
         SOLAIRE_FORCE_INLINE Reference operator[](const int32_t aIndex) throw() {
-            return *GetPtr(aIndex);
+            return *getPtr(aIndex);
         }
 
         SOLAIRE_FORCE_INLINE ConstReference operator[](const int32_t aIndex) const throw() {
-            return *const_cast<StaticContainer<T>*>(this)->GetPtr(aIndex);
+            return *const_cast<StaticContainer<T>*>(this)->getPtr(aIndex);
         }
 
         SOLAIRE_FORCE_INLINE STLIterator<T> begin() throw() {
-            return STLIterator<T>(Begin());
+            return STLIterator<T>(begin_());
         }
 
         SOLAIRE_FORCE_INLINE STLIterator<T> end() throw() {
-            return STLIterator<T>(End());
+            return STLIterator<T>(end_());
         }
 
         SOLAIRE_FORCE_INLINE STLIterator<const T> begin() const throw() {
-            return STLIterator<T>(const_cast<StaticContainer<T>*>(this)->Begin());
+            return STLIterator<T>(const_cast<StaticContainer<T>*>(this)->begin_());
         }
 
         SOLAIRE_FORCE_INLINE STLIterator<const T> end() const throw() {
-            return STLIterator<T>(const_cast<StaticContainer<T>*>(this)->End());
+            return STLIterator<T>(const_cast<StaticContainer<T>*>(this)->end_());
         }
 
         SOLAIRE_FORCE_INLINE STLIterator<T> rbegin() throw() {
-            return STLIterator<T>(Rbegin());
+            return STLIterator<T>(rbegin_());
         }
 
         SOLAIRE_FORCE_INLINE STLIterator<T> rend() throw() {
-            return STLIterator<T>(Rend());
+            return STLIterator<T>(rend_());
         }
 
         SOLAIRE_FORCE_INLINE STLIterator<const T> rbegin() const throw() {
-            return STLIterator<T>(const_cast<StaticContainer<T>*>(this)->Rbegin());
+            return STLIterator<T>(const_cast<StaticContainer<T>*>(this)->rbegin_());
         }
 
         SOLAIRE_FORCE_INLINE STLIterator<const T> rend() const throw() {
-            return STLIterator<T>(const_cast<StaticContainer<T>*>(this)->Rend());
+            return STLIterator<T>(const_cast<StaticContainer<T>*>(this)->rend_());
         }
 	};
 
@@ -101,15 +101,15 @@ namespace Solaire {
 	SOLAIRE_EXPORT_INTERFACE Stack : public StaticContainer<T> {
 	public:
 		virtual  SOLAIRE_EXPORT_CALL ~Stack() throw() {}
-		virtual T& SOLAIRE_EXPORT_CALL PushBack(const T&) throw() = 0;
-		virtual T SOLAIRE_EXPORT_CALL PopBack() throw() = 0;
-		virtual void SOLAIRE_EXPORT_CALL Clear() throw() = 0;
+		virtual T& SOLAIRE_EXPORT_CALL pushBack(const T&) throw() = 0;
+		virtual T SOLAIRE_EXPORT_CALL popBack() throw() = 0;
+		virtual void SOLAIRE_EXPORT_CALL clear() throw() = 0;
 
-		SOLAIRE_FORCE_INLINE T& SOLAIRE_DEFAULT_CALL Back() throw() {
+		SOLAIRE_FORCE_INLINE T& SOLAIRE_DEFAULT_CALL back() throw() {
 			return operator[](StaticContainer<T>::Size() - 1);
 		}
 
-		SOLAIRE_FORCE_INLINE const T& SOLAIRE_DEFAULT_CALL Back() const throw() {
+		SOLAIRE_FORCE_INLINE const T& SOLAIRE_DEFAULT_CALL back() const throw() {
 			return operator[](StaticContainer<T>::Size() - 1);
 		}
 	};
@@ -119,14 +119,14 @@ namespace Solaire {
 	public:
 		virtual SOLAIRE_EXPORT_CALL ~Deque() throw() {}
 
-		virtual T& SOLAIRE_EXPORT_CALL PushFront(const T&) throw() = 0;
-		virtual T SOLAIRE_EXPORT_CALL PopFront() throw() = 0;
+		virtual T& SOLAIRE_EXPORT_CALL pushFront(const T&) throw() = 0;
+		virtual T SOLAIRE_EXPORT_CALL popFront() throw() = 0;
 
-		SOLAIRE_FORCE_INLINE T& SOLAIRE_DEFAULT_CALL Front() throw() {
+		SOLAIRE_FORCE_INLINE T& SOLAIRE_DEFAULT_CALL front() throw() {
 			return StaticContainer<T>::operator[](0);
 		}
 
-		SOLAIRE_FORCE_INLINE const T& SOLAIRE_DEFAULT_CALL Front() const throw() {
+		SOLAIRE_FORCE_INLINE const T& SOLAIRE_DEFAULT_CALL front() const throw() {
 			return StaticContainer<T>::operator[](0);
 		}
 	};
@@ -136,9 +136,9 @@ namespace Solaire {
 	public:
 		virtual SOLAIRE_EXPORT_CALL ~List() throw() {}
 
-		virtual T& SOLAIRE_EXPORT_CALL InsertBefore(const int32_t, const T&) throw() = 0;
-		virtual T& SOLAIRE_EXPORT_CALL InsertAfter(const int32_t, const T&) throw() = 0;
-		virtual bool SOLAIRE_EXPORT_CALL Erase(const int32_t) throw() = 0;
+		virtual T& SOLAIRE_EXPORT_CALL insertBefore(const int32_t, const T&) throw() = 0;
+		virtual T& SOLAIRE_EXPORT_CALL insertAfter(const int32_t, const T&) throw() = 0;
+		virtual bool SOLAIRE_EXPORT_CALL erase(const int32_t) throw() = 0;
 	};
 
 }

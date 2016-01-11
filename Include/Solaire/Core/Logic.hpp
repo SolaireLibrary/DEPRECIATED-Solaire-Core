@@ -67,7 +67,7 @@ namespace Solaire {
         \param aSecond The right hand value.
         \return The result of the operation.
     */
-    static constexpr bool LogicalOr(const bool aFirst, const bool aSecond) {
+    static constexpr bool logicalOr(const bool aFirst, const bool aSecond) {
         return aFirst || aSecond;
     }
 
@@ -105,7 +105,7 @@ namespace Solaire {
         \param aSecond The right hand value.
         \return The result of the operation.
     */
-    static constexpr bool LogicalAnd(const bool aFirst, const bool aSecond) {
+    static constexpr bool logicalAnd(const bool aFirst, const bool aSecond) {
         return aFirst && aSecond;
     }
 
@@ -143,7 +143,7 @@ namespace Solaire {
         \param aSecond The right hand value.
         \return The result of the operation.
     */
-    static constexpr bool LogicalXor(const bool aFirst, const bool aSecond) {
+    static constexpr bool logicalXor(const bool aFirst, const bool aSecond) {
         return (aFirst || aSecond) && ! (aFirst && aSecond);
     }
 
@@ -181,7 +181,7 @@ namespace Solaire {
         \param aSecond The right hand value.
         \return The result of the operation.
     */
-    static constexpr bool LogicalNor(const bool aFirst, const bool aSecond) {
+    static constexpr bool logicalNor(const bool aFirst, const bool aSecond) {
         return ! (aFirst || aSecond);
     }
 
@@ -219,7 +219,7 @@ namespace Solaire {
         \param aSecond The right hand value.
         \return The result of the operation.
     */
-    static constexpr bool LogicalNand(const bool aFirst, const bool aSecond) {
+    static constexpr bool logicalNand(const bool aFirst, const bool aSecond) {
         return ! (aFirst && aSecond);
     }
 
@@ -257,7 +257,7 @@ namespace Solaire {
         \param aSecond The right hand value.
         \return The result of the operation.
     */
-    static constexpr bool LogicalXnor(const bool aFirst, const bool aSecond) {
+    static constexpr bool logicalXnor(const bool aFirst, const bool aSecond) {
         return (aFirst && aSecond) || ! (aFirst || aSecond);
     }
 }

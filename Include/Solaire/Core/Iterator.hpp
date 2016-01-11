@@ -41,11 +41,11 @@ namespace Solaire {
     public:
         virtual SOLAIRE_EXPORT_CALL ~Iterator() throw() {}
 
-        virtual Iterator<T>& SOLAIRE_EXPORT_CALL Increment(int32_t) throw() = 0;
-        virtual Iterator<T>& SOLAIRE_EXPORT_CALL Decrement(int32_t) throw() = 0;
-        virtual SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL Copy() const throw() = 0;
-        virtual int32_t SOLAIRE_EXPORT_CALL GetOffset() const throw() = 0;
-        virtual T* SOLAIRE_EXPORT_CALL GetPtr() throw() = 0;
+        virtual Iterator<T>& SOLAIRE_EXPORT_CALL increment(int32_t) throw() = 0;
+        virtual Iterator<T>& SOLAIRE_EXPORT_CALL decrement(int32_t) throw() = 0;
+        virtual SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL copy() const throw() = 0;
+        virtual int32_t SOLAIRE_EXPORT_CALL getOffset() const throw() = 0;
+        virtual T* SOLAIRE_EXPORT_CALL getPtr() throw() = 0;
     };
 
     template<class T>
@@ -70,109 +70,109 @@ namespace Solaire {
         // Input Iterator
 
         STLIterator<T>& operator++() throw() {
-            mIterator->Increment(1);
+            mIterator->increment(1);
             return *this;
         }
 
         SharedAllocation<Iterator<T>> operator++(int) throw() {
-            SharedAllocation<Iterator<T>> tmp = mIterator->Copy();
-            mIterator->Increment(1);
+            SharedAllocation<Iterator<T>> tmp = mIterator->copy();
+            mIterator->increment(1);
             return STLIterator<T>(tmp);
         }
 
         bool operator==(const STLIterator<T> aOther) const throw() {
-            return aOther.mIterator->GetOffset() == mIterator->GetOffset();
+            return aOther.mIterator->getOffset() == mIterator->getOffset();
         }
 
         bool operator!=(const STLIterator<T> aOther) const throw() {
-            return aOther.mIterator->GetOffset() != mIterator->GetOffset();
+            return aOther.mIterator->getOffset() != mIterator->getOffset();
         }
 
         ConstReference operator*() const throw() {
-            return *const_cast<STLIterator<T>*>(this)->mIterator->GetPtr();
+            return *const_cast<STLIterator<T>*>(this)->mIterator->getPtr();
         }
 
         ConstPointer operator->() const throw() {
-            return const_cast<STLIterator<T>*>(this)->mIterator->GetPtr();
+            return const_cast<STLIterator<T>*>(this)->mIterator->getPtr();
         }
 
         // Output Iterator
 
         Reference operator*() throw() {
-            return *mIterator->GetPtr();
+            return *mIterator->getPtr();
         }
 
         Pointer operator->() throw() {
-            return mIterator->GetPtr();
+            return mIterator->getPtr();
         }
 
         // Bidirectional Iterator
 
         STLIterator<T>& operator--() throw() {
-            mIterator->Decrement(1);
+            mIterator->decrement(1);
             return *this;
         }
 
         STLIterator<T> operator--(int) throw() {
-            SharedAllocation<Iterator<T>> tmp = mIterator->Copy();
-            mIterator->Decrement(1);
+            SharedAllocation<Iterator<T>> tmp = mIterator->copy();
+            mIterator->decrement(1);
             return STLIterator<T>(tmp);
         }
 
         // Random Access Iterator
 
         STLIterator<T>& operator+=(const int32_t aCount) throw() {
-            mIterator->Increment(aCount);
+            mIterator->increment(aCount);
             return *this;
         }
 
         STLIterator<T> operator+(const int32_t aCount) throw() {
-            SharedAllocation<Iterator<T>> tmp = mIterator->Copy();
-            tmp.Increment(aCount);
+            SharedAllocation<Iterator<T>> tmp = mIterator->copy();
+            tmp.increment(aCount);
             return STLIterator(tmp);
         }
 
         STLIterator<T>& operator-=(const int32_t aCount) throw() {
-            mIterator->Decrement(aCount);
+            mIterator->decrement(aCount);
             return *this;
         }
 
         STLIterator<T> operator-(const int32_t aCount) throw() {
-            SharedAllocation<Iterator<T>> tmp = mIterator->Copy();
-            tmp.Decrement(aCount);
+            SharedAllocation<Iterator<T>> tmp = mIterator->copy();
+            tmp.decrement(aCount);
             return STLIterator(tmp);
         }
 
         int32_t operator-(const STLIterator<T>&aOther) const throw() {
-            return mIterator->GetOffset() - aOther.mIterator->GetOffset();
+            return mIterator->getOffset() - aOther.mIterator->getOffset();
         }
 
         Reference operator[](const int32_t aOffset) throw() {
-            SharedAllocation<Iterator<T>> tmp = mIterator->Copy();
-            tmp.Increment(aOffset);
+            SharedAllocation<Iterator<T>> tmp = mIterator->copy();
+            tmp.increment(aOffset);
             return **tmp;
         }
 
         ConstReference operator[](const int32_t aOffset) const throw() {
-            SharedAllocation<Iterator<T>> tmp = mIterator->Copy();
-            tmp.Increment(aOffset);
+            SharedAllocation<Iterator<T>> tmp = mIterator->copy();
+            tmp.increment(aOffset);
             return **tmp;
         }
 
         bool operator<(const STLIterator<T> aOther) const throw() {
-            return aOther.mIterator->GetOffset() < mIterator->GetOffset();
+            return aOther.mIterator->getOffset() < mIterator->getOffset();
         }
 
         bool operator>(const STLIterator<T> aOther) const throw() {
-            return aOther.mIterator->GetOffset() > mIterator->GetOffset();
+            return aOther.mIterator->getOffset() > mIterator->getOffset();
         }
 
         bool operator<=(const STLIterator<T> aOther) const throw() {
-            return aOther.mIterator->GetOffset() <= mIterator->GetOffset();
+            return aOther.mIterator->getOffset() <= mIterator->getOffset();
         }
 
         bool operator>=(const STLIterator<T> aOther) const throw() {
-            return aOther.mIterator->GetOffset() >= mIterator->GetOffset();
+            return aOther.mIterator->getOffset() >= mIterator->getOffset();
         }
     };
 }

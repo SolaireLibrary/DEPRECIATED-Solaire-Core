@@ -65,8 +65,8 @@ namespace Solaire {
 			\see Allocate
 		*/
 		template<class T, typename ...PARAMS>
-		SOLAIRE_FORCE_INLINE T* SOLAIRE_DEFAULT_CALL RawAllocate(PARAMS&&... aParams) {
-			return new(Allocate(sizeof(T))) T(aParams...);
+		SOLAIRE_FORCE_INLINE T* SOLAIRE_DEFAULT_CALL rawAllocate(PARAMS&&... aParams) {
+			return new(allocate(sizeof(T))) T(aParams...);
 		}
 
 		/*!
@@ -79,10 +79,10 @@ namespace Solaire {
 			\see Allocate
 		*/
 		template<class T, typename ...PARAMS>
-		SOLAIRE_FORCE_INLINE UniqueAllocation<T> SOLAIRE_DEFAULT_CALL UniqueAllocate(PARAMS&&... aParams) {
+		SOLAIRE_FORCE_INLINE UniqueAllocation<T> SOLAIRE_DEFAULT_CALL uniqueAllocate(PARAMS&&... aParams) {
 			return UniqueAllocation<T>(
 				*this,
-				new(Allocate(sizeof(T))) T(aParams...)
+				new(allocate(sizeof(T))) T(aParams...)
 			);
 		}
 
@@ -96,10 +96,10 @@ namespace Solaire {
 			\see Allocate
 		*/
 		template<class T, typename ...PARAMS>
-		SOLAIRE_FORCE_INLINE SharedAllocation<T> SOLAIRE_DEFAULT_CALL SharedAllocate(PARAMS&&... aParams) {
+		SOLAIRE_FORCE_INLINE SharedAllocation<T> SOLAIRE_DEFAULT_CALL sharedAllocate(PARAMS&&... aParams) {
 			return SharedAllocation<T>(
 				*this,
-				new(Allocate(sizeof(T))) T(aParams...)
+				new(allocate(sizeof(T))) T(aParams...)
 			);
 		}
     };

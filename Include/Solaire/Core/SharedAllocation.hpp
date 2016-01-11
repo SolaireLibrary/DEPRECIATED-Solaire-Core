@@ -49,7 +49,7 @@ namespace Solaire {
         ~SharedObject() {
             if(Object) {
                 Object->~T();
-                Allocator_.Deallocate(Object);
+                Allocator_.deallocate(Object);
             }
         }
 	};
@@ -67,7 +67,7 @@ namespace Solaire {
 		    --mObject->Count;
 		    if(mObject->Count == 0) {
                 mObject->~SharedObject();
-                mObject->Allocator_.Deallocate(mObject);
+                mObject->Allocator_.deallocate(mObject);
 		    }
 		    mObject = nullptr;
 		    return true;
@@ -79,7 +79,7 @@ namespace Solaire {
 		{}
 
 		SharedAllocation(AllocatorI& aAllocator, T* const aObject) throw() :
-			mObject(new(aAllocator.Allocate(sizeof(SharedObject<T>))) SharedObject<T>(aAllocator, aObject))
+			mObject(new(aAllocator.allocate(sizeof(SharedObject<T>))) SharedObject<T>(aAllocator, aObject))
 		{
 		    ++mObject->Count;
 		}
@@ -134,11 +134,11 @@ namespace Solaire {
 			return *this;
 		}
 
-		void Swap(SharedAllocation<T>& aOther) throw() {
+		void swap(SharedAllocation<T>& aOther) throw() {
 			std::swap(mObject, aOther.mObject);
 		}
 
-		T* ReleaseOwnership() throw() {
+		T* releaseOwnership() throw() {
 			if(mObject == nullptr) return nullptr;
 			if(mObject->Count != 1) return nullptr;
 
@@ -147,11 +147,11 @@ namespace Solaire {
 			return tmp;
 		}
 
-		AllocatorI& GetAllocator() const throw() {
+		AllocatorI& getAllocator() const throw() {
 			return mObject->Allocator_;
 		}
 
-		uint32_t GetUserCount() const throw() {
+		uint32_t getUserCount() const throw() {
 			return mObject == nullptr ? 0 : mObject->Count;
 		}
 

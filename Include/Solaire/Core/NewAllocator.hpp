@@ -31,33 +31,33 @@ namespace Solaire{
 		{}
 
 		SOLAIRE_EXPORT_CALL ~NewAllocator() throw() {
-			DeallocateAll();
+			deallocateAll();
 		}
 
 		// Inherited from Allocator
 
-		uint32_t SOLAIRE_EXPORT_CALL GetAllocatedBytes() const throw()  override {
+		uint32_t SOLAIRE_EXPORT_CALL getAllocatedBytes() const throw()  override {
 			return mAllocatedBytes;
 		}
 
-		uint32_t SOLAIRE_EXPORT_CALL GetFreeBytes() const throw() override {
+		uint32_t SOLAIRE_EXPORT_CALL getFreeBytes() const throw() override {
 			return UINT32_MAX - mAllocatedBytes;
 		}
 
-		uint32_t SOLAIRE_EXPORT_CALL SizeOf(const void* const aObject) throw() override {
+		uint32_t SOLAIRE_EXPORT_CALL sizeOf(const void* const aObject) throw() override {
 			auto it = mAllocations.find(aObject);
 			if(it == mAllocations.end()) return 0;
 			return it->second;
 		}
 
-		void* SOLAIRE_EXPORT_CALL Allocate(const size_t aBytes) throw() override {
+		void* SOLAIRE_EXPORT_CALL allocate(const size_t aBytes) throw() override {
 			void* const tmp = operator new(aBytes);
 			mAllocations.emplace(tmp, aBytes);
 			mAllocatedBytes += aBytes;
 			return tmp;
 		}
 
-		bool SOLAIRE_EXPORT_CALL Deallocate(const void* const aObject) throw() override {
+		bool SOLAIRE_EXPORT_CALL deallocate(const void* const aObject) throw() override {
 			auto it = mAllocations.find(aObject);
 			if(it == mAllocations.end()) return false;
 			operator delete(const_cast<void*>(aObject));
@@ -66,7 +66,7 @@ namespace Solaire{
 			return true;
 		}
 
-		bool SOLAIRE_EXPORT_CALL DeallocateAll() throw() {
+		bool SOLAIRE_EXPORT_CALL deallocateAll() throw() {
 			for(auto i : mAllocations) {
 				operator delete(const_cast<void*>(i.first));
 			}

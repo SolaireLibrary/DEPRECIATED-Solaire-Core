@@ -44,7 +44,7 @@ namespace Solaire {
 		bool DeleteObject() throw() {
 			if(mObject == nullptr) return false;
 			mObject->~T();
-			if(! mAllocator->Deallocate(mObject)) return false;
+			if(! mAllocator->deallocate(mObject)) return false;
 			mObject = nullptr;
 			return true;
 		}
@@ -78,18 +78,18 @@ namespace Solaire {
 			return *this;
 		}
 
-		void Swap(UniqueAllocation<T>& aOther) throw() {
+		void swap(UniqueAllocation<T>& aOther) throw() {
 			std::swap(mAllocator, aOther.mAllocator);
 			std::swap(mObject, aOther.mObject);
 		}
 
-		T* ReleaseOwnership() throw() {
+		T* releaseOwnership() throw() {
 			T* const tmp = mObject;
 			mObject = nullptr;
 			return tmp;
 		}
 
-		AllocatorI& GetAllocator() const throw(){
+		AllocatorI& getAllocator() const throw(){
 			return *mAllocator;
 		}
 
