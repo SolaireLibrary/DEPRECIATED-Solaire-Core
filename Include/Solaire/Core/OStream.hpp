@@ -52,7 +52,7 @@ namespace Solaire {
         virtual SOLAIRE_EXPORT_CALL ~OStream(){}
 
         virtual void SOLAIRE_EXPORT_CALL write(const void* const, const uint32_t) throw() = 0;
-        virtual int32_t SOLAIRE_EXPORT_CALL isOffsetable() const throw() = 0;
+        virtual bool SOLAIRE_EXPORT_CALL isOffsetable() const throw() = 0;
         virtual int32_t SOLAIRE_EXPORT_CALL getOffset() const throw() = 0;
         virtual bool SOLAIRE_EXPORT_CALL setOffset(const int32_t) throw() = 0;
 
