@@ -95,6 +95,14 @@ namespace Solaire {
         SOLAIRE_FORCE_INLINE STLIterator<const T> rend() const throw() {
             return STLIterator<T>(const_cast<StaticContainer<T>*>(this)->rend_());
         }
+
+        SOLAIRE_FORCE_INLINE operator StaticContainer<const T>&() throw() {
+            return *reinterpret_cast<StaticContainer<const T>*>(this);
+        }
+
+        SOLAIRE_FORCE_INLINE operator const StaticContainer<const T>&() const throw() {
+            return *reinterpret_cast<StaticContainer<const T>*>(this);
+        }
 	};
 
 	template<class T>
@@ -106,12 +114,20 @@ namespace Solaire {
 		virtual void SOLAIRE_EXPORT_CALL clear() throw() = 0;
 
 		SOLAIRE_FORCE_INLINE T& SOLAIRE_DEFAULT_CALL back() throw() {
-			return operator[](StaticContainer<T>::Size() - 1);
+			return StaticContainer<T>::operator[](StaticContainer<T>::size() - 1);
 		}
 
 		SOLAIRE_FORCE_INLINE const T& SOLAIRE_DEFAULT_CALL back() const throw() {
-			return operator[](StaticContainer<T>::Size() - 1);
+			return StaticContainer<T>::operator[](StaticContainer<T>::size() - 1);
 		}
+
+        SOLAIRE_FORCE_INLINE operator Stack<const T>&() throw() {
+            return *reinterpret_cast<Stack<const T>*>(this);
+        }
+
+        SOLAIRE_FORCE_INLINE operator const Stack<const T>&() const throw() {
+            return *reinterpret_cast<Stack<const T>*>(this);
+        }
 	};
 
 	template<class T>
@@ -129,6 +145,14 @@ namespace Solaire {
 		SOLAIRE_FORCE_INLINE const T& SOLAIRE_DEFAULT_CALL front() const throw() {
 			return StaticContainer<T>::operator[](0);
 		}
+
+        SOLAIRE_FORCE_INLINE operator Deque<const T>&() throw() {
+            return *reinterpret_cast<Deque<const T>*>(this);
+        }
+
+        SOLAIRE_FORCE_INLINE operator const Deque<const T>&() const throw() {
+            return *reinterpret_cast<Deque<const T>*>(this);
+        }
 	};
 
 	template<class T>
@@ -139,11 +163,18 @@ namespace Solaire {
 		virtual T& SOLAIRE_EXPORT_CALL insertBefore(const int32_t, const T&) throw() = 0;
 		virtual T& SOLAIRE_EXPORT_CALL insertAfter(const int32_t, const T&) throw() = 0;
 		virtual bool SOLAIRE_EXPORT_CALL erase(const int32_t) throw() = 0;
+
+        SOLAIRE_FORCE_INLINE operator List<const T>&() throw() {
+            return *reinterpret_cast<List<const T>*>(this);
+        }
+
+        SOLAIRE_FORCE_INLINE operator const List<const T>&() const throw() {
+            return *reinterpret_cast<List<const T>*>(this);
+        }
 	};
 
 	typedef StaticContainer<const char> StringConstant;
 	typedef List<char> String;
-	typedef List<const char> ConstString;
 
 }
 

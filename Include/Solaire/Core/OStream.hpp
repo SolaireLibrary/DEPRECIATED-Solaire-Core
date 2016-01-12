@@ -32,6 +32,7 @@
 
 #include <cstdint>
 #include "Solaire/Core/ModuleHeader.hpp"
+#include "Solaire/Core/Container.hpp"
 
 namespace Solaire {
 
@@ -59,6 +60,18 @@ namespace Solaire {
         template<size_t LENGTH>
         SOLAIRE_FORCE_INLINE OStream& operator<<(const char(&aString)[LENGTH]) {
             write(aString, LENGTH - 1);
+            return *this;
+        }
+
+        SOLAIRE_FORCE_INLINE OStream& operator<<(const StringConstant& aString) {
+            if(aString.isContiguous()) {
+                write(&aString[0], aString.size());
+            }else {
+                const int32_t size = aString.size();
+                for(int32_t i = 0; i < size; ++i) {
+                    writeC(aString[i]);
+                }
+            }
             return *this;
         }
 
