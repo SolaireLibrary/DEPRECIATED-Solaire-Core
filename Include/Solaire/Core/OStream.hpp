@@ -40,7 +40,7 @@ namespace Solaire {
         virtual void SOLAIRE_EXPORT_CALL writeU8(const uint8_t) throw() = 0;
         virtual void SOLAIRE_EXPORT_CALL writeU16(const uint16_t) throw() = 0;
         virtual void SOLAIRE_EXPORT_CALL writeU32(const uint32_t) throw() = 0;
-        virtual void SOLAIRE_EXPORT_CALL WriteU64(const uint64_t) throw() = 0;
+        virtual void SOLAIRE_EXPORT_CALL writeU64(const uint64_t) throw() = 0;
         virtual void SOLAIRE_EXPORT_CALL writeI8(const int8_t) throw() = 0;
         virtual void SOLAIRE_EXPORT_CALL writeI16(const int16_t) throw() = 0;
         virtual void SOLAIRE_EXPORT_CALL writeI32(const int32_t) throw() = 0;
@@ -54,7 +54,7 @@ namespace Solaire {
         virtual void SOLAIRE_EXPORT_CALL write(const void* const, const uint32_t) throw() = 0;
         virtual int32_t SOLAIRE_EXPORT_CALL isOffsetable() const throw() = 0;
         virtual int32_t SOLAIRE_EXPORT_CALL getOffset() const throw() = 0;
-        virtual bool SOLAIRE_EXPORT_CALL getOffset(const int32_t) throw() = 0;
+        virtual bool SOLAIRE_EXPORT_CALL setOffset(const int32_t) throw() = 0;
 
         SOLAIRE_FORCE_INLINE void operator<<(const uint8_t aValue) throw() {
             writeU8(aValue);

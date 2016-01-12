@@ -54,7 +54,7 @@ namespace Solaire {
         virtual void SOLAIRE_EXPORT_CALL read(void* const, const uint32_t) throw() = 0;
         virtual bool SOLAIRE_EXPORT_CALL isOffsetable() const throw() = 0;
         virtual int32_t SOLAIRE_EXPORT_CALL getOffset() const throw() = 0;
-        virtual int32_t SOLAIRE_EXPORT_CALL getOffset(const int32_t) throw() = 0;
+        virtual bool SOLAIRE_EXPORT_CALL setOffset(const int32_t) throw() = 0;
         virtual bool SOLAIRE_EXPORT_CALL end() const throw() = 0;
 
         SOLAIRE_FORCE_INLINE void operator>>(uint8_t& aValue) throw() {
