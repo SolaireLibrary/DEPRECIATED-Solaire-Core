@@ -130,11 +130,11 @@ namespace Solaire {
             }
         }
 
-        SOLAIRE_FORCE_INLINE int32_t FindFirstOf(const T& aValue) const throw() {
-            return FindNextOf(0, aValue);
+        SOLAIRE_FORCE_INLINE int32_t findFirstOf(const T& aValue) const throw() {
+            return findNextOf(0, aValue);
         }
 
-        inline int32_t FindNextOf(const int32_t aIndex, const T& aValue) const throw() {
+        inline int32_t findNextOf(const int32_t aIndex, const T& aValue) const throw() {
             const int32_t length = size();
             if(isContiguous()) {
                 const T* const ptr = getPtr(0);
@@ -150,14 +150,14 @@ namespace Solaire {
             return length;
         }
 
-        inline int32_t FindLastOf(const T& aValue) const throw() {
+        inline int32_t findLastOf(const T& aValue) const throw() {
             const int32_t end = size();
-            int32_t i = FindFirstOf(aValue);
+            int32_t i = findFirstOf(aValue);
             int32_t j = i;
 
             while(i != end) {
                 j = i;
-                i = FindNextOf(i + 1, aValue);
+                i = findNextOf(i + 1, aValue);
             }
 
             return j;
