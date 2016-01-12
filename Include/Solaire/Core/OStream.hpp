@@ -56,6 +56,12 @@ namespace Solaire {
         virtual int32_t SOLAIRE_EXPORT_CALL getOffset() const throw() = 0;
         virtual bool SOLAIRE_EXPORT_CALL setOffset(const int32_t) throw() = 0;
 
+        template<typename A>
+        typename std::enable_if<std::is_array<A>::value && std::is_same<A, A>::value, OStream&>::type operator<<(const A& aString) {
+            write(&aString, std::extent<A>::value - 1);
+            return *this;
+        }
+
         SOLAIRE_FORCE_INLINE OStream& operator<<(const uint8_t aValue) throw() {
             writeU8(aValue);
             return *this;
