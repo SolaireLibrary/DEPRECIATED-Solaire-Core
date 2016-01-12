@@ -103,6 +103,32 @@ namespace Solaire {
         SOLAIRE_FORCE_INLINE operator const StaticContainer<const T>&() const throw() {
             return *reinterpret_cast<StaticContainer<const T>*>(this);
         }
+
+        inline bool operator==(const StaticContainer<const T>& aOther) const throw() {
+            const int32_t length = size();
+            if(length != aOther.size()) return false;
+            if(std::is_fundamental<T>::value && isContiguous() && aOther.isContiguous()) {
+                return std::memcmp(getPtr(0), aOther.getPtr(0), sizeof(T) * length) == 0;
+            }else {
+                for(int32_t i = 0; i < length; ++i) {
+                    if(getPtr(i) != aOther.getPtr(i)) return false;
+                }
+                return true;
+            }
+        }
+
+        inline bool operator!=(const StaticContainer<const T>& aOther) const throw() {
+            const int32_t length = size();
+            if(length != aOther.size()) return true;
+            if(std::is_fundamental<T>::value && isContiguous() && aOther.isContiguous()) {
+                return std::memcmp(getPtr(0), aOther.getPtr(0), sizeof(T) * length) != 0;
+            }else {
+                for(int32_t i = 0; i < length; ++i) {
+                    if(getPtr(i) != aOther.getPtr(i)) return true;
+                }
+                return false;
+            }
+        }
 	};
 
 	template<class T>
