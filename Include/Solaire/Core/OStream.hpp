@@ -56,48 +56,59 @@ namespace Solaire {
         virtual int32_t SOLAIRE_EXPORT_CALL getOffset() const throw() = 0;
         virtual bool SOLAIRE_EXPORT_CALL setOffset(const int32_t) throw() = 0;
 
-        SOLAIRE_FORCE_INLINE void operator<<(const uint8_t aValue) throw() {
+        SOLAIRE_FORCE_INLINE OStream& operator<<(const uint8_t aValue) throw() {
             writeU8(aValue);
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE void operator<<(const uint16_t aValue) throw() {
+        SOLAIRE_FORCE_INLINE OStream& operator<<(const uint16_t aValue) throw() {
             writeU16(aValue);
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE void operator<<(const uint32_t aValue) throw() {
+        SOLAIRE_FORCE_INLINE OStream& operator<<(const uint32_t aValue) throw() {
             writeU32(aValue);
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE void operator<<(const uint64_t aValue) throw() {
+        SOLAIRE_FORCE_INLINE OStream& operator<<(const uint64_t aValue) throw() {
             writeU64(aValue);
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE void operator<<(const int8_t aValue) throw() {
+        SOLAIRE_FORCE_INLINE OStream& operator<<(const int8_t aValue) throw() {
             writeI8(aValue);
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE void operator<<(const int16_t aValue) throw() {
+        SOLAIRE_FORCE_INLINE OStream& operator<<(const int16_t aValue) throw() {
             writeI16(aValue);
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE void operator<<(const int32_t aValue) throw() {
+        SOLAIRE_FORCE_INLINE OStream& operator<<(const int32_t aValue) throw() {
             writeI32(aValue);
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE void operator<<(const int64_t aValue) throw() {
+        SOLAIRE_FORCE_INLINE OStream& operator<<(const int64_t aValue) throw() {
             writeI64(aValue);
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE void operator<<(const float aValue) throw() {
+        SOLAIRE_FORCE_INLINE OStream& operator<<(const float aValue) throw() {
             writeF(aValue);
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE void operator<<(const double aValue) throw() {
+        SOLAIRE_FORCE_INLINE OStream& operator<<(const double aValue) throw() {
             writeD(aValue);
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE void operator<<(const char aValue) throw() {
+        SOLAIRE_FORCE_INLINE OStream& operator<<(const char aValue) throw() {
             writeC(aValue);
+            return *this;
         }
     };
 

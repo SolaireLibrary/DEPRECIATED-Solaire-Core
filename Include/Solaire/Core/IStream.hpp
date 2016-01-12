@@ -57,48 +57,59 @@ namespace Solaire {
         virtual bool SOLAIRE_EXPORT_CALL setOffset(const int32_t) throw() = 0;
         virtual bool SOLAIRE_EXPORT_CALL end() const throw() = 0;
 
-        SOLAIRE_FORCE_INLINE void operator>>(uint8_t& aValue) throw() {
+        SOLAIRE_FORCE_INLINE IStream& operator>>(uint8_t& aValue) throw() {
             aValue = readU8();
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE void operator>>(uint16_t& aValue) throw() {
+        SOLAIRE_FORCE_INLINE IStream& operator>>(uint16_t& aValue) throw() {
             aValue = readU16();
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE void operator>>(uint32_t& aValue) throw() {
+        SOLAIRE_FORCE_INLINE IStream& operator>>(uint32_t& aValue) throw() {
             aValue = readU32();
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE void operator>>(uint64_t& aValue) throw() {
+        SOLAIRE_FORCE_INLINE IStream& operator>>(uint64_t& aValue) throw() {
             aValue = readU64();
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE void operator>>(int8_t& aValue) throw() {
+        SOLAIRE_FORCE_INLINE IStream& operator>>(int8_t& aValue) throw() {
             aValue = readI8();
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE void operator>>(int16_t& aValue) throw() {
+        SOLAIRE_FORCE_INLINE IStream& operator>>(int16_t& aValue) throw() {
             aValue = readI16();
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE void operator>>(int32_t& aValue) throw() {
+        SOLAIRE_FORCE_INLINE IStream& operator>>(int32_t& aValue) throw() {
             aValue = readI32();
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE void operator>>(int64_t& aValue) throw() {
+        SOLAIRE_FORCE_INLINE IStream& operator>>(int64_t& aValue) throw() {
             aValue = readI64();
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE void operator>>(float& aValue) throw() {
+        SOLAIRE_FORCE_INLINE IStream& operator>>(float& aValue) throw() {
             aValue = readF();
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE void operator>>(double& aValue) throw() {
+        SOLAIRE_FORCE_INLINE IStream& operator>>(double& aValue) throw() {
             aValue = readD();
+            return *this;
         }
 
-        SOLAIRE_FORCE_INLINE void operator>>(char& aValue) throw() {
+        SOLAIRE_FORCE_INLINE IStream& operator>>(char& aValue) throw() {
             aValue = readC();
+            return *this;
         }
     };
 
