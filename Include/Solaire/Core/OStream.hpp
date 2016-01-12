@@ -37,64 +37,67 @@ namespace Solaire {
 
 	SOLAIRE_EXPORT_INTERFACE OStream {
     private:
-        virtual void SOLAIRE_EXPORT_CALL WriteU8(const uint8_t) throw() = 0;
-        virtual void SOLAIRE_EXPORT_CALL WriteU16(const uint16_t) throw() = 0;
-        virtual void SOLAIRE_EXPORT_CALL WriteU32(const uint32_t) throw() = 0;
+        virtual void SOLAIRE_EXPORT_CALL writeU8(const uint8_t) throw() = 0;
+        virtual void SOLAIRE_EXPORT_CALL writeU16(const uint16_t) throw() = 0;
+        virtual void SOLAIRE_EXPORT_CALL writeU32(const uint32_t) throw() = 0;
         virtual void SOLAIRE_EXPORT_CALL WriteU64(const uint64_t) throw() = 0;
-        virtual void SOLAIRE_EXPORT_CALL WriteI8(const int8_t) throw() = 0;
-        virtual void SOLAIRE_EXPORT_CALL WriteI16(const int16_t) throw() = 0;
-        virtual void SOLAIRE_EXPORT_CALL WriteI32(const int32_t) throw() = 0;
-        virtual void SOLAIRE_EXPORT_CALL WriteI64(const int64_t) throw() = 0;
-        virtual void SOLAIRE_EXPORT_CALL WriteF(const float) throw() = 0;
-        virtual void SOLAIRE_EXPORT_CALL WriteD(const double) throw() = 0;
-        virtual void SOLAIRE_EXPORT_CALL WriteC(const char) throw() = 0;
+        virtual void SOLAIRE_EXPORT_CALL writeI8(const int8_t) throw() = 0;
+        virtual void SOLAIRE_EXPORT_CALL writeI16(const int16_t) throw() = 0;
+        virtual void SOLAIRE_EXPORT_CALL writeI32(const int32_t) throw() = 0;
+        virtual void SOLAIRE_EXPORT_CALL writeI64(const int64_t) throw() = 0;
+        virtual void SOLAIRE_EXPORT_CALL writeF(const float) throw() = 0;
+        virtual void SOLAIRE_EXPORT_CALL writeD(const double) throw() = 0;
+        virtual void SOLAIRE_EXPORT_CALL writeC(const char) throw() = 0;
     public:
         virtual SOLAIRE_EXPORT_CALL ~OStream(){}
 
-        virtual void SOLAIRE_EXPORT_CALL Write(const void* const, const uint32_t) throw() = 0;
+        virtual void SOLAIRE_EXPORT_CALL write(const void* const, const uint32_t) throw() = 0;
+        virtual int32_t SOLAIRE_EXPORT_CALL isOffsetable() const throw() = 0;
+        virtual int32_t SOLAIRE_EXPORT_CALL getOffset() const throw() = 0;
+        virtual bool SOLAIRE_EXPORT_CALL getOffset(const int32_t) throw() = 0;
 
         SOLAIRE_FORCE_INLINE void operator<<(const uint8_t aValue) throw() {
-            WriteU8(aValue);
+            writeU8(aValue);
         }
 
         SOLAIRE_FORCE_INLINE void operator<<(const uint16_t aValue) throw() {
-            WriteU16(aValue);
+            writeU16(aValue);
         }
 
         SOLAIRE_FORCE_INLINE void operator<<(const uint32_t aValue) throw() {
-            WriteU32(aValue);
+            writeU32(aValue);
         }
 
         SOLAIRE_FORCE_INLINE void operator<<(const uint64_t aValue) throw() {
-            WriteU64(aValue);
+            writeU64(aValue);
         }
 
         SOLAIRE_FORCE_INLINE void operator<<(const int8_t aValue) throw() {
-            WriteI8(aValue);
+            writeI8(aValue);
         }
 
         SOLAIRE_FORCE_INLINE void operator<<(const int16_t aValue) throw() {
-            WriteI16(aValue);
+            writeI16(aValue);
         }
 
         SOLAIRE_FORCE_INLINE void operator<<(const int32_t aValue) throw() {
-            WriteI32(aValue);
+            writeI32(aValue);
         }
 
         SOLAIRE_FORCE_INLINE void operator<<(const int64_t aValue) throw() {
-            WriteI64(aValue);
+            writeI64(aValue);
         }
 
         SOLAIRE_FORCE_INLINE void operator<<(const float aValue) throw() {
-            WriteF(aValue);
+            writeF(aValue);
         }
 
         SOLAIRE_FORCE_INLINE void operator<<(const double aValue) throw() {
-            WriteD(aValue);
+            writeD(aValue);
         }
 
         SOLAIRE_FORCE_INLINE void operator<<(const char aValue) throw() {
-            WriteC(aValue);
+            writeC(aValue);
         }
     };
 

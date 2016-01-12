@@ -37,64 +37,67 @@ namespace Solaire {
 
 	SOLAIRE_EXPORT_INTERFACE IStream {
     private:
-        virtual uint8_t SOLAIRE_EXPORT_CALL ReadU8() throw() = 0;
-        virtual uint16_t SOLAIRE_EXPORT_CALL ReadU16() throw() = 0;
-        virtual uint32_t SOLAIRE_EXPORT_CALL ReadU32() throw() = 0;
-        virtual uint64_t SOLAIRE_EXPORT_CALL ReadU64() throw() = 0;
-        virtual int8_t SOLAIRE_EXPORT_CALL ReadI8() throw() = 0;
-        virtual int16_t SOLAIRE_EXPORT_CALL ReadI16() throw() = 0;
-        virtual int32_t SOLAIRE_EXPORT_CALL ReadI32() throw() = 0;
-        virtual int64_t SOLAIRE_EXPORT_CALL ReadI64() throw() = 0;
-        virtual float SOLAIRE_EXPORT_CALL ReadF() throw() = 0;
-        virtual double SOLAIRE_EXPORT_CALL ReadD() throw() = 0;
-        virtual char SOLAIRE_EXPORT_CALL ReadC() throw() = 0;
+        virtual uint8_t SOLAIRE_EXPORT_CALL readU8() throw() = 0;
+        virtual uint16_t SOLAIRE_EXPORT_CALL readU16() throw() = 0;
+        virtual uint32_t SOLAIRE_EXPORT_CALL readU32() throw() = 0;
+        virtual uint64_t SOLAIRE_EXPORT_CALL readU64() throw() = 0;
+        virtual int8_t SOLAIRE_EXPORT_CALL readI8() throw() = 0;
+        virtual int16_t SOLAIRE_EXPORT_CALL readI16() throw() = 0;
+        virtual int32_t SOLAIRE_EXPORT_CALL readI32() throw() = 0;
+        virtual int64_t SOLAIRE_EXPORT_CALL readI64() throw() = 0;
+        virtual float SOLAIRE_EXPORT_CALL readF() throw() = 0;
+        virtual double SOLAIRE_EXPORT_CALL readD() throw() = 0;
+        virtual char SOLAIRE_EXPORT_CALL readC() throw() = 0;
     public:
         virtual SOLAIRE_EXPORT_CALL ~IStream(){}
 
-        virtual void SOLAIRE_EXPORT_CALL Read(void* const, const uint32_t) throw() = 0;
+        virtual void SOLAIRE_EXPORT_CALL read(void* const, const uint32_t) throw() = 0;
+        virtual int32_t SOLAIRE_EXPORT_CALL isOffsetable() const throw() = 0;
+        virtual int32_t SOLAIRE_EXPORT_CALL getOffset() const throw() = 0;
+        virtual bool SOLAIRE_EXPORT_CALL getOffset(const int32_t) throw() = 0;
 
         SOLAIRE_FORCE_INLINE void operator>>(uint8_t& aValue) throw() {
-            aValue = ReadU8();
+            aValue = readU8();
         }
 
         SOLAIRE_FORCE_INLINE void operator>>(uint16_t& aValue) throw() {
-            aValue = ReadU16();
+            aValue = readU16();
         }
 
         SOLAIRE_FORCE_INLINE void operator>>(uint32_t& aValue) throw() {
-            aValue = ReadU32();
+            aValue = readU32();
         }
 
         SOLAIRE_FORCE_INLINE void operator>>(uint64_t& aValue) throw() {
-            aValue = ReadU64();
+            aValue = readU64();
         }
 
         SOLAIRE_FORCE_INLINE void operator>>(int8_t& aValue) throw() {
-            aValue = ReadI8();
+            aValue = readI8();
         }
 
         SOLAIRE_FORCE_INLINE void operator>>(int16_t& aValue) throw() {
-            aValue = ReadI16();
+            aValue = readI16();
         }
 
         SOLAIRE_FORCE_INLINE void operator>>(int32_t& aValue) throw() {
-            aValue = ReadI32();
+            aValue = readI32();
         }
 
         SOLAIRE_FORCE_INLINE void operator>>(int64_t& aValue) throw() {
-            aValue = ReadI64();
+            aValue = readI64();
         }
 
         SOLAIRE_FORCE_INLINE void operator>>(float& aValue) throw() {
-            aValue = ReadF();
+            aValue = readF();
         }
 
         SOLAIRE_FORCE_INLINE void operator>>(double& aValue) throw() {
-            aValue = ReadD();
+            aValue = readD();
         }
 
         SOLAIRE_FORCE_INLINE void operator>>(char& aValue) throw() {
-            aValue = ReadC();
+            aValue = readC();
         }
     };
 
