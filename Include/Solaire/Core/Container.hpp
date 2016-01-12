@@ -137,13 +137,13 @@ namespace Solaire {
         inline int32_t findNextOf(const int32_t aIndex, const T& aValue) const throw() {
             const int32_t length = size();
             if(isContiguous()) {
-                const T* const ptr = getPtr(0);
+                const T* const ptr = const_cast<StaticContainer<T>*>(this)->getPtr(0);
                 for(int32_t i = aIndex; i < length; ++i) {
                     if(ptr[i] == aValue) return i;
                 }
             }else {
                 for(int32_t i = aIndex; i < length; ++i) {
-                    if(*getPtr(i) == aValue) return i;
+                    if(*const_cast<StaticContainer<T>*>(this)->getPtr(i) == aValue) return i;
                 }
             }
 
