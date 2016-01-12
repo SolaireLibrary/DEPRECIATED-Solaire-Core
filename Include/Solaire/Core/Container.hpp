@@ -165,7 +165,7 @@ namespace Solaire {
 
         template<class F>
         SOLAIRE_FORCE_INLINE int32_t findFirstIf(const F aCondition) const throw() {
-            return findNextOf(0, aCondition);
+            return findNextIf(0, aCondition);
         }
 
         template<class F>
