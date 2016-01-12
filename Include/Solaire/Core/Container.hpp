@@ -162,6 +162,42 @@ namespace Solaire {
 
             return j;
         }
+
+        template<class F>
+        SOLAIRE_FORCE_INLINE int32_t findFirstIf(const F aCondition) const throw() {
+            return findNextOf(0, aCondition);
+        }
+
+        template<class F>
+        inline int32_t findNextIf(const int32_t aIndex, const F aCondition) const throw() {
+            const int32_t length = size();
+            if(isContiguous()) {
+                const T* const ptr = const_cast<StaticContainer<T>*>(this)->getPtr(0);
+                for(int32_t i = aIndex; i < length; ++i) {
+                    if(aCondition(ptr[i])) return i;
+                }
+            }else {
+                for(int32_t i = aIndex; i < length; ++i) {
+                    if(aCondition(*const_cast<StaticContainer<T>*>(this)->getPtr(i))) return i;
+                }
+            }
+
+            return length;
+        }
+
+        template<class F>
+        inline int32_t findLastIf(const F aCondition) const throw() {
+            const int32_t end = size();
+            int32_t i = findFirstIf(aCondition);
+            int32_t j = i;
+
+            while(i != end) {
+                j = i;
+                i = findNextIf(i + 1, aCondition);
+            }
+
+            return j;
+        }
 	};
 
 	template<class T>
