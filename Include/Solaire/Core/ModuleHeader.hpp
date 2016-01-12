@@ -75,4 +75,12 @@
 	#define SOLAIRE_EXPORT_CALL SOLAIRE_DEFAULT_CALL
 #endif
 
+namespace Solaire {
+
+	template<typename Type, size_t LENGTH>
+    static constexpr size_t SizeOfArray(const Type(&)[LENGTH]) {
+      return LENGTH;
+    }
+}
+
 #endif
