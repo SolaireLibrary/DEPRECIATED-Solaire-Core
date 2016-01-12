@@ -129,6 +129,39 @@ namespace Solaire {
                 return false;
             }
         }
+
+        SOLAIRE_FORCE_INLINE int32_t FindFirstOf(const T& aValue) const throw() {
+            return FindNextOf(0, aValue);
+        }
+
+        inline int32_t FindNextOf(const int32_t aIndex, const T& aValue) const throw() {
+            const int32_t length = size();
+            if(isContiguous()) {
+                const T* const ptr = getPtr(0);
+                for(int32_t i = aIndex; i < length; ++i) {
+                    if(ptr[i] == aValue) return i;
+                }
+            }else {
+                for(int32_t i = aIndex; i < length; ++i) {
+                    if(*getPtr(i) == aValue) return i;
+                }
+            }
+
+            return length;
+        }
+
+        inline int32_t FindLastOf(const T& aValue) const throw() {
+            const int32_t end = size();
+            int32_t i = FindFirstOf(aValue);
+            int32_t j = i;
+
+            while(i != end) {
+                j = i;
+                i = FindNextOf(i + 1, aValue);
+            }
+
+            return j;
+        }
 	};
 
 	template<class T>
