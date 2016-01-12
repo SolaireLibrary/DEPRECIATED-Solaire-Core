@@ -256,6 +256,74 @@ namespace Solaire{
 
 	////
 
+	static constexpr uint16_t combine16(
+        const uint8_t aByte0, const uint8_t aByte1
+    ) {
+        return (static_cast<uint16_t>(aByte0) << 8) | aByte1;
+    }
+
+	static constexpr uint32_t combine32(
+        const uint8_t aByte0, const uint8_t aByte1,
+        const uint8_t aByte2, const uint8_t aByte3
+    ) {
+        return
+            (static_cast<uint32_t>(aByte0) << 24) |
+            (static_cast<uint32_t>(aByte1) << 16) |
+            (static_cast<uint32_t>(aByte2) << 8) |
+            aByte3;
+    }
+
+	static constexpr uint32_t combine64(
+        const uint8_t aByte0, const uint8_t aByte1,
+        const uint8_t aByte2, const uint8_t aByte3,
+        const uint8_t aByte4, const uint8_t aByte5,
+        const uint8_t aByte6, const uint8_t aByte7
+    ) {
+        return
+            (static_cast<uint64_t>(aByte0) << 56L) |
+            (static_cast<uint64_t>(aByte1) << 48L) |
+            (static_cast<uint64_t>(aByte2) << 40L) |
+            (static_cast<uint64_t>(aByte3) << 32L) |
+            (static_cast<uint64_t>(aByte4) << 24L) |
+            (static_cast<uint64_t>(aByte5) << 16L) |
+            (static_cast<uint64_t>(aByte6) << 8L) |
+            aByte7;
+    }
+
+    static constexpr int8_t signCast(const uint8_t aValue) {
+        return *reinterpret_cast<const int8_t*>(aValue);
+    }
+
+    static constexpr int16_t signCast(const uint16_t aValue) {
+        return *reinterpret_cast<const int16_t*>(aValue);
+    }
+
+    static constexpr int32_t signCast(const uint32_t aValue) {
+        return *reinterpret_cast<const int32_t*>(aValue);
+    }
+
+    static constexpr int64_t signCast(const uint64_t aValue) {
+        return *reinterpret_cast<const int64_t*>(aValue);
+    }
+
+    static constexpr uint8_t signCast(const int8_t aValue) {
+        return *reinterpret_cast<const uint8_t*>(aValue);
+    }
+
+    static constexpr uint16_t signCast(const int16_t aValue) {
+        return *reinterpret_cast<const uint16_t*>(aValue);
+    }
+
+    static constexpr uint32_t signCast(const int32_t aValue) {
+        return *reinterpret_cast<const uint32_t*>(aValue);
+    }
+
+    static constexpr uint64_t signCast(const int64_t aValue) {
+        return *reinterpret_cast<const uint64_t*>(aValue);
+    }
+
+	////
+
 	/*template<class T, typename ENABLE = std::enable_if_t<std::is_integral<T>::value>>
 	struct RowMajorOrder {
 		static constexpr T index(const T aX, const T aY, const T aWidth, const T aHeight) throw() {
