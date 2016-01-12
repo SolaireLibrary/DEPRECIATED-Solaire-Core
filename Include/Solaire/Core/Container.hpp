@@ -141,6 +141,10 @@ namespace Solaire {
 		virtual bool SOLAIRE_EXPORT_CALL erase(const int32_t) throw() = 0;
 	};
 
+	typedef StaticContainer<const char> StringConstant;
+	typedef List<char> String;
+	typedef List<const char> ConstString;
+
 }
 
 
