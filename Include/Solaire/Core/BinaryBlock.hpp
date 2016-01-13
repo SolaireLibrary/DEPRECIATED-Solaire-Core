@@ -34,63 +34,178 @@
 
 namespace Solaire {
 
-    static constexpr bool binaryBlockFn(const int8_t aBytes, const int8_t aMin, const int8_t aMax) throw() {
-        return aBytes >= aMin && aBytes < aMax;
+    namespace Implementation {
+        static constexpr bool binaryBlockFn(const int8_t aBytes, const int8_t aMin, const int8_t aMax) throw() {
+            return aBytes >= aMin && aBytes < aMax;
+        }
+
+        template<const uint32_t BYTES>
+        struct ByteArray {
+        private:
+            uint8_t mBytes[BYTES];
+        };
+
+        template<const uint32_t BYTES, const bool SIGN, typename ENABLE = void>
+        struct BinaryBlockStruct {
+            typedef ByteArray<BYTES> Type;
+        };
+
+        template<const uint32_t BYTES, const bool SIGN>
+        struct BinaryBlockStruct<BYTES, SIGN, typename std::enable_if<binaryBlockFn(BYTES, 33, 65) && ! SIGN>::type> {
+            typedef uint64_t Type;
+        };
+
+        template<const uint32_t BYTES, const bool SIGN>
+        struct BinaryBlockStruct<BYTES, SIGN, typename std::enable_if<binaryBlockFn(BYTES, 17, 33) && ! SIGN>::type> {
+            typedef uint32_t Type;
+        };
+
+        template<const uint32_t BYTES, const bool SIGN>
+        struct BinaryBlockStruct<BYTES, SIGN, typename std::enable_if<binaryBlockFn(BYTES, 9, 17) && ! SIGN>::type> {
+            typedef uint16_t Type;
+        };
+
+        template<const uint32_t BYTES, const bool SIGN>
+        struct BinaryBlockStruct<BYTES, SIGN, typename std::enable_if<binaryBlockFn(BYTES, 0, 9) && ! SIGN>::type> {
+            typedef uint8_t Type;
+        };
+
+        template<const uint32_t BYTES, const bool SIGN>
+        struct BinaryBlockStruct<BYTES, SIGN, typename std::enable_if<binaryBlockFn(BYTES, 33, 65) && SIGN>::type> {
+            typedef int64_t Type;
+        };
+
+        template<const uint32_t BYTES, const bool SIGN>
+        struct BinaryBlockStruct<BYTES, SIGN, typename std::enable_if<binaryBlockFn(BYTES, 17, 33) && SIGN>::type> {
+            typedef int32_t Type;
+        };
+
+        template<const uint32_t BYTES, const bool SIGN>
+        struct BinaryBlockStruct<BYTES, SIGN, typename std::enable_if<binaryBlockFn(BYTES, 9, 17) && SIGN>::type> {
+            typedef int16_t Type;
+        };
+
+        template<const uint32_t BYTES, const bool SIGN>
+        struct BinaryBlockStruct<BYTES, SIGN, typename std::enable_if<binaryBlockFn(BYTES, 0, 9) && SIGN>::type> {
+            typedef int8_t Type;
+        };
     }
 
-    template<const uint32_t BYTES>
-    struct ByteArray {
-    private:
-        uint8_t mBytes[BYTES];
-    };
-
-    template<const uint32_t BYTES, const bool SIGN, typename ENABLE = void>
-    struct BinaryBlockStruct {
-        typedef ByteArray<BYTES> Type;
-    };
-
+    /*!
+        \brief A type that can contain the requested number of bytes.
+        \detail
+        <table>
+            <tr>
+                <th>Bytes</th>
+                <th>Sign</th>
+                <th>Type</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>-</td>
+                <td>uint8_t</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>+</td>
+                <td>int8_t</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>-</td>
+                <td>uint16_t</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>+</td>
+                <td>int16_t</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>-</td>
+                <td>uint32_t</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>+</td>
+                <td>int32_t</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>_</td>
+                <td>uint32_t</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>+</td>
+                <td>int32_t</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>-</td>
+                <td>uint64_t</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>+</td>
+                <td>int64_t</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>-</td>
+                <td>uint64_t</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>+</td>
+                <td>int64_t</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>-</td>
+                <td>uint64_t</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>+</td>
+                <td>int64_t</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>-</td>
+                <td>uint64_t</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>+</td>
+                <td>int64_t</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td>-</td>
+                <td>Implementation::ByteArray<9></td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td>+</td>
+                <td>Implementation::ByteArray<9></td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td>-</td>
+                <td>Implementation::ByteArray<10></td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td>+</td>
+                <td>Implementation::ByteArray<10></td>
+            </tr>
+        </table>
+        \tparam BYTES The number of bytes to contain.
+        \tparam SIGN If the type should be signed, not guaranteed.
+    */
     template<const uint32_t BYTES, const bool SIGN>
-    struct BinaryBlockStruct<BYTES, SIGN, typename std::enable_if<binaryBlockFn(BYTES, 33, 65) && ! SIGN>::type> {
-        typedef uint64_t Type;
-    };
-
-    template<const uint32_t BYTES, const bool SIGN>
-    struct BinaryBlockStruct<BYTES, SIGN, typename std::enable_if<binaryBlockFn(BYTES, 17, 33) && ! SIGN>::type> {
-        typedef uint32_t Type;
-    };
-
-    template<const uint32_t BYTES, const bool SIGN>
-    struct BinaryBlockStruct<BYTES, SIGN, typename std::enable_if<binaryBlockFn(BYTES, 9, 17) && ! SIGN>::type> {
-        typedef uint16_t Type;
-    };
-
-    template<const uint32_t BYTES, const bool SIGN>
-    struct BinaryBlockStruct<BYTES, SIGN, typename std::enable_if<binaryBlockFn(BYTES, 0, 9) && ! SIGN>::type> {
-        typedef uint8_t Type;
-    };
-
-    template<const uint32_t BYTES, const bool SIGN>
-    struct BinaryBlockStruct<BYTES, SIGN, typename std::enable_if<binaryBlockFn(BYTES, 33, 65) && SIGN>::type> {
-        typedef int64_t Type;
-    };
-
-    template<const uint32_t BYTES, const bool SIGN>
-    struct BinaryBlockStruct<BYTES, SIGN, typename std::enable_if<binaryBlockFn(BYTES, 17, 33) && SIGN>::type> {
-        typedef int32_t Type;
-    };
-
-    template<const uint32_t BYTES, const bool SIGN>
-    struct BinaryBlockStruct<BYTES, SIGN, typename std::enable_if<binaryBlockFn(BYTES, 9, 17) && SIGN>::type> {
-        typedef int16_t Type;
-    };
-
-    template<const uint32_t BYTES, const bool SIGN>
-    struct BinaryBlockStruct<BYTES, SIGN, typename std::enable_if<binaryBlockFn(BYTES, 0, 9) && SIGN>::type> {
-        typedef int8_t Type;
-    };
-
-    template<const uint32_t BYTES, const bool SIGN>
-    using BinaryBlock = typename BinaryBlockStruct<BYTES, SIGN>::Type;
+    using BinaryBlock = typename Implementation::BinaryBlockStruct<BYTES, SIGN>::Type;
 }
 
 
