@@ -62,6 +62,11 @@ namespace Solaire {
         #undef SOLAIRE_BIGGER_INTEGER_STRUCT
     }
 
+    /*!
+        \brief An integer type that has a higher maximum value than type T.
+        \tparam T The base integer type.
+        \tparam SIGN True if the defined type should be signed, false for unsigned. This defaults to the signedness of T.
+    */
     template<class T, const bool SIGN = std::is_signed<T>::value>
     using BiggerInteger = typename Implementation::BiggerIntegerStruct<T, SIGN>::Type;
 
@@ -113,14 +118,71 @@ namespace Solaire {
         };
     }
 
+    /*!
+        \brief An integer type that can represent any value that can be represented by types A and B.
+        \detail
+        <table>
+            <tr>
+                <th>Type A</th>
+                <th>Type B</th>
+                <th>IntegerContainer</th>
+            </tr>
+            <tr>
+                <td>uint16_t</td>
+                <td>uint16_t</td>
+                <td>uint16_t</td>
+            </tr>
+            <tr>
+                <td>int16_t</td>
+                <td>int16_t</td>
+                <td>int16_t</td>
+            </tr>
+            <tr>
+                <td>uint16_t</td>
+                <td>int16_t</td>
+                <td>int32_t</td>
+            </tr>
+            <tr>
+                <td>int16_t</td>
+                <td>uint16_t</td>
+                <td>int32_t</td>
+            </tr>
+            <tr>
+                <td>uint8_t</td>
+                <td>uint16_t</td>
+                <td>uint16_t</td>
+            </tr>
+        </table>
+        \tparam A The first integer type.
+        \tparam B The second integer type.
+        \see IntegerContainer3
+        \see IntegerContainer4
+    */
     template<class A, class B>
-    using IntegerContainer2 = typename Implementation::IntegerContainerStruct<A, B>::Type;
+    using IntegerContainer = typename Implementation::IntegerContainerStruct<A, B>::Type;
 
+    /*!
+        \brief An integer type that can represent any value that can be represented by types A, B or C.
+        \tparam A The first integer type.
+        \tparam B The second integer type.
+        \tparam C The third integer type.
+        \see IntegerContainer
+        \see IntegerContainer4
+    */
     template<class A, class B, class C>
-    using IntegerContainer3 = IntegerContainer2<IntegerContainer2<A, B>, C>;
+    using IntegerContainer3 = IntegerContainer<IntegerContainer<A, B>, C>;
 
+    /*!
+        \brief An integer type that can represent any value that can be represented by types A, B, C or D.
+        \tparam A The first integer type.
+        \tparam B The second integer type.
+        \tparam C The third integer type.
+        \tparam D The fourth integer type.
+        \see IntegerContainer
+        \see IntegerContainer3
+    */
     template<class A, class B, class C, class D>
-    using IntegerContainer4 = IntegerContainer2<IntegerContainer2<A, B>, IntegerContainer2<C, D>>;
+    using IntegerContainer4 = IntegerContainer<IntegerContainer<A, B>, IntegerContainer<C, D>>;
 }
 
 
