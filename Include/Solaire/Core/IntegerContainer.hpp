@@ -30,7 +30,7 @@
 	Last Modified	: 13th January 2016
 */
 
-#include "Solaire/Core/BinaryBlock.hpp"
+#include <type_traits>
 
 namespace Solaire {
 
@@ -62,7 +62,7 @@ namespace Solaire {
         #undef SOLAIRE_BIGGER_INTEGER_STRUCT
     }
 
-    template<class T, const bool SIGN>
+    template<class T, const bool SIGN = std::is_signed<T>::value>
     using BiggerInteger = typename Implementation::BiggerIntegerStruct<T, SIGN>::Type;
 
     namespace Implementation {
@@ -94,22 +94,22 @@ namespace Solaire {
         struct IntegerContainerStruct<A, B, typename std::enable_if<
             ((! canIntegerContain<A,B>()) && (! canIntegerContain<B,A>())) &&
             (
-                canIntegerContain<BiggerInteger<A, std::is_signed<A>::value>, A>() &&
-                canIntegerContain<BiggerInteger<A, std::is_signed<A>::value>, B>()
+                canIntegerContain<BiggerInteger<A>, A>() &&
+                canIntegerContain<BiggerInteger<A>, B>()
              )
         >::type> {
-            typedef BiggerInteger<A, std::is_signed<A>::value> Type;
+            typedef BiggerInteger<A> Type;
         };
 
         template<class A, class B>
         struct IntegerContainerStruct<A, B, typename std::enable_if<
             ((! canIntegerContain<A,B>()) && (! canIntegerContain<B,A>())) &&
             (
-                canIntegerContain<BiggerInteger<B, std::is_signed<B>::value>, A>() &&
-                canIntegerContain<BiggerInteger<B, std::is_signed<B>::value>, B>()
+                canIntegerContain<BiggerInteger<B>, A>() &&
+                canIntegerContain<BiggerInteger<B>, B>()
              )
         >::type> {
-            typedef BiggerInteger<B, std::is_signed<B>::value> Type;
+            typedef BiggerInteger<B> Type;
         };
     }
 
