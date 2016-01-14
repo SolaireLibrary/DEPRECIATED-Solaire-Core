@@ -62,7 +62,7 @@ namespace Solaire {
 	private:
 		SharedObject<T>* mObject;
 	private:
-		bool DeleteObject() throw() {
+		bool deleteObject() throw() {
 		    if(mObject == nullptr) return false;
 		    --mObject->Count;
 		    if(mObject->Count == 0) {
@@ -111,24 +111,24 @@ namespace Solaire {
 		}*/
 
 		~SharedAllocation() throw() {
-			DeleteObject();
+			deleteObject();
 		}
 
 		SharedAllocation& operator=(const SharedAllocation<T>& aOther) throw() {
-			DeleteObject();
+			deleteObject();
 			mObject = aOther.mObject;
 			++mObject->Count;
 			return *this;
 		}
 
 		SharedAllocation& operator=(SharedAllocation<T>&& aOther) throw() {
-			Swap(aOther);
+			swap(aOther);
 			return *this;
 		}
 
 		template<class T2>
 		SharedAllocation& operator=(const SharedAllocation<T2>& aOther) throw() {
-			DeleteObject();
+			deleteObject();
 			mObject = aOther.mObject;
 			++mObject->Count;
 			return *this;
@@ -143,7 +143,7 @@ namespace Solaire {
 			if(mObject->Count != 1) return nullptr;
 
 			T* const tmp = mObject->Object;
-			DeleteObject();
+			deleteObject();
 			return tmp;
 		}
 
@@ -165,6 +165,16 @@ namespace Solaire {
 
 		T* operator->() const throw() {
 			return mObject == nullptr ? nullptr : mObject->Object;
+		}
+
+		template<class T2>
+		bool operator==(const SharedAllocation<T2> aOther) const throw() {
+		    return mObject == aOther.mObject;
+		}
+
+		template<class T2>
+		bool operator!=(const SharedAllocation<T2> aOther) const throw() {
+		    return mObject != aOther.mObject;
 		}
 	};
 }
