@@ -117,7 +117,7 @@ namespace Solaire {
 		SharedAllocation& operator=(const SharedAllocation<T>& aOther) throw() {
 			deleteObject();
 			mObject = aOther.mObject;
-			++mObject->Count;
+			if(mObject != nullptr) ++mObject->Count;
 			return *this;
 		}
 
