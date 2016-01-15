@@ -101,13 +101,13 @@ namespace Solaire { namespace File {
         const char* const filename = Implementation::makeCString(aFilename, buffer);
 
         DWORD access = 0;
-        if (aAttributes & FLAG_READ) access |= GENERIC_READ;
-        if (aAttributes & FLAG_WRITE) access |= GENERIC_WRITE;
+        if(aAttributes & FLAG_READ) access |= GENERIC_READ;
+        if(aAttributes & FLAG_WRITE) access |= GENERIC_WRITE;
 
         DWORD flags = 0;
-        if (aAttributes & FLAG_HIDDEN) flags |= FILE_ATTRIBUTE_HIDDEN;
-        if ((aAttributes & FLAG_READ) != 0 && (aAttributes & FLAG_WRITE) == 0) flags |= FILE_ATTRIBUTE_READONLY;
-        if (flags == 0) flags = FILE_ATTRIBUTE_NORMAL;
+        if(aAttributes & FLAG_HIDDEN) flags |= FILE_ATTRIBUTE_HIDDEN;
+        if((aAttributes & FLAG_READ) != 0 && (aAttributes & FLAG_WRITE) == 0) flags |= FILE_ATTRIBUTE_READONLY;
+        if(flags == 0) flags = FILE_ATTRIBUTE_NORMAL;
 
         const HANDLE handle = CreateFileA(
             filename,
@@ -158,7 +158,7 @@ namespace Solaire { namespace File {
 
         if(seperator == length) {
             return STLString();
-        } else {
+        }else {
             STLString tmp;
             for(int32_t i = seperator + 1; i < end; ++i) tmp.pushBack(aFilename[i]);
             return tmp;
@@ -171,7 +171,7 @@ namespace Solaire { namespace File {
 
         if(seperator == length) {
             return STLString();
-        } else {
+        }else {
             STLString tmp;
             for(int32_t i = 0; i <= seperator; ++i) tmp.pushBack(aFilename[i]);
             return tmp;
