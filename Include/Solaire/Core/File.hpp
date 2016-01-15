@@ -36,57 +36,59 @@
 #include "Solaire\Core\Container.hpp"
 #include "Solaire\Core\STLString.hpp"
 
-namespace Solaire { namespace File{
+namespace Solaire {
+    namespace FileImplementation {
 
+        typedef uint8_t AttributeFlags;
 
-	typedef uint8_t AttributeFlags;
+        enum : AttributeFlags {
+            FLAG_READ			= BIT_0,
+            FLAG_WRITE			= BIT_1,
+            FLAG_EXECUTABLE		= BIT_2,
+            FLAG_HIDDEN			= BIT_3,
+            FLAG_FILE			= BIT_4,
+            FLAG_DIRECTORY		= BIT_5,
+            FLAG_EXISTS			= BIT_6,
 
-	enum : AttributeFlags {
-		FLAG_READ			= BIT_0,
-		FLAG_WRITE			= BIT_1,
-		FLAG_EXECUTABLE		= BIT_2,
-		FLAG_HIDDEN			= BIT_3,
-		FLAG_FILE			= BIT_4,
-		FLAG_DIRECTORY		= BIT_5,
-		FLAG_EXISTS			= BIT_6,
+            FLAG_NONE			= 0,
+            FLAG_READ_WRITE		= FLAG_READ | FLAG_WRITE
+        };
 
-		FLAG_NONE			= 0,
-		FLAG_READ_WRITE		= FLAG_READ | FLAG_WRITE
-	};
+        enum {
+            MAX_PATH_LENGTH = 512
+        };
 
-	enum {
-		MAX_PATH_LENGTH = 512
-	};
+        enum : char {
+            #if SOLAIRE_OS == SOLAIRE_WINDOWS
+                FILE_SEPERATOR = '\\'
+            #else
+                FILE_SEPERATOR = '/'
+            #endif
+        };
 
-	enum : char {
-		#if SOLAIRE_OS == SOLAIRE_WINDOWS
-			FILE_SEPERATOR = '\\'
-		#else
-			FILE_SEPERATOR = '/'
-		#endif
-	};
+        static AttributeFlags SOLAIRE_EXPORT_CALL getAttributes(const StringConstant<char>&) throw();
 
-	AttributeFlags SOLAIRE_EXPORT_CALL getAttributes(const StringConstant<char>&) throw();
+        static bool SOLAIRE_EXPORT_CALL createFile(const StringConstant<char>&, const AttributeFlags) throw();
+        static bool SOLAIRE_EXPORT_CALL createDirectory(const StringConstant<char>&) throw();
+        static bool SOLAIRE_EXPORT_CALL deleteFile(const StringConstant<char>&) throw();
+        static bool SOLAIRE_EXPORT_CALL deleteDirectory(const StringConstant<char>&) throw();
 
-    bool SOLAIRE_EXPORT_CALL createFile(const StringConstant<char>&, const AttributeFlags) throw();
-    bool SOLAIRE_EXPORT_CALL createDirectory(const StringConstant<char>&) throw();
-    bool SOLAIRE_EXPORT_CALL deleteFile(const StringConstant<char>&) throw();
-    bool SOLAIRE_EXPORT_CALL deleteDirectory(const StringConstant<char>&) throw();
+        static STLString SOLAIRE_EXPORT_CALL getParent(const StringConstant<char>&) throw();
+        static STLString SOLAIRE_EXPORT_CALL getName(const StringConstant<char>&) throw();
+        static STLString SOLAIRE_EXPORT_CALL getExtension(const StringConstant<char>&) throw();
 
-    STLString SOLAIRE_EXPORT_CALL getParent(const StringConstant<char>&) throw();
-    STLString SOLAIRE_EXPORT_CALL getName(const StringConstant<char>&) throw();
-    STLString SOLAIRE_EXPORT_CALL getExtension(const StringConstant<char>&) throw();
+        static int32_t SOLAIRE_EXPORT_CALL size(const StringConstant<char>&) throw();
 
-    int32_t SOLAIRE_EXPORT_CALL size(const StringConstant<char>&) throw();
+        static bool SOLAIRE_EXPORT_CALL getFileList(const StringConstant<char>&, Stack<STLString>&) throw();
+        static STLString SOLAIRE_EXPORT_CALL getCurrentDirectory() throw();
+        static STLString SOLAIRE_EXPORT_CALL getTemporaryDirectory() throw();
 
-    bool SOLAIRE_EXPORT_CALL getFileList(const StringConstant<char>&, Stack<STLString>&) throw();
-    STLString SOLAIRE_EXPORT_CALL getCurrentDirectory() throw();
-    STLString SOLAIRE_EXPORT_CALL getTemporaryDirectory() throw();
+        static bool SOLAIRE_EXPORT_CALL rename(const StringConstant<char>&, const StringConstant<char>&) throw();
+        static bool SOLAIRE_EXPORT_CALL copy(const StringConstant<char>&, const StringConstant<char>&) throw();
+        static bool SOLAIRE_EXPORT_CALL move(const StringConstant<char>&, const StringConstant<char>&) throw();
+    }
 
-    bool SOLAIRE_EXPORT_CALL rename(const StringConstant<char>&, const StringConstant<char>&) throw();
-    bool SOLAIRE_EXPORT_CALL copy(const StringConstant<char>&, const StringConstant<char>&) throw();
-    bool SOLAIRE_EXPORT_CALL move(const StringConstant<char>&, const StringConstant<char>&) throw();
-}}
+}
 
 #if SOLAIRE_OS == SOLAIRE_WINDOWS
     #include "Solaire/Core/FileWindows.inl"

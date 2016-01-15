@@ -1,3 +1,6 @@
+#ifndef SOLAIRE_NEW_ALLOCATOR_HPP
+#define SOLAIRE_NEW_ALLOCATOR_HPP
+
 //Copyright 2015 Adam Smith
 //
 //Licensed under the Apache License, Version 2.0 (the "License");
@@ -78,3 +81,4 @@ namespace Solaire{
 	static NewAllocator DEFAULT_ALLOCATOR;
 
 }
+#endif

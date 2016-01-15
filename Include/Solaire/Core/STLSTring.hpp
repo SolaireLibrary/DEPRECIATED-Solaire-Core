@@ -31,7 +31,7 @@
 */
 
 #include <string>
-#include "Solaire/Core/Allocator.hpp"
+#include "Solaire/Core/NewAllocator.hpp"
 #include "Solaire/Core/String.hpp"
 
 namespace Solaire{

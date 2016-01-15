@@ -1,3 +1,6 @@
+#ifndef SOLAIRE_FILE_INL
+#define SOLAIRE_FILE_INL
+
 //Copyright 2015 Adam Smith
 //
 //Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,11 +31,11 @@
 	Last Modified	: 15th January 2016
 */
 
-namespace Solaire { namespace File {
+namespace Solaire { namespace FileImplementation {
 
     namespace Implementation {
 
-        const char* const makeCString(const StringConstant<char>& aString, char* aPath) {
+        static const char* const makeCString(const StringConstant<char>& aString, char* aPath) {
             const int32_t size = aString.size();
             aPath[size] = '\0';
             if(aString.isContiguous()) {
@@ -43,7 +46,7 @@ namespace Solaire { namespace File {
             return aPath;
         }
 
-         bool openFile(const StringConstant<char>& aFilename, HANDLE& aHandle, const int32_t aFlags) {
+        static bool openFile(const StringConstant<char>& aFilename, HANDLE& aHandle, const int32_t aFlags) {
             char filename[MAX_PATH_LENGTH + 1];
             Implementation::makeCString(aFilename, filename);
             const HANDLE handle = CreateFileA(
@@ -59,19 +62,19 @@ namespace Solaire { namespace File {
             return handle != INVALID_HANDLE_VALUE;
         }
 
-         bool openRFile(const StringConstant<char>& aFilename, HANDLE& aHandle) {
+        static bool openRFile(const StringConstant<char>& aFilename, HANDLE& aHandle) {
             return openFile(aFilename, aHandle, GENERIC_READ);
         }
 
-         bool openWFile(const StringConstant<char>& aFilename, HANDLE& aHandle) {
+        static bool openWFile(const StringConstant<char>& aFilename, HANDLE& aHandle) {
             return openFile(aFilename, aHandle, GENERIC_WRITE);
         }
 
-         bool openRWFile(const StringConstant<char>& aFilename, HANDLE& aHandle) {
+        static bool openRWFile(const StringConstant<char>& aFilename, HANDLE& aHandle) {
             return openFile(aFilename, aHandle, GENERIC_READ | GENERIC_WRITE);
         }
 
-        bool closeFile(HANDLE& aHandle) {
+        static bool closeFile(HANDLE& aHandle) {
             return CloseHandle(aHandle);
         }
     }
@@ -239,3 +242,5 @@ namespace Solaire { namespace File {
         return MoveFileA(Implementation::makeCString(aFilename, bufferA), Implementation::makeCString(aTarget, bufferB)) > 0;
     }
 }}
+
+#endif

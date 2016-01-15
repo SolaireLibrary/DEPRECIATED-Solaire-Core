@@ -30,6 +30,7 @@
 	Last Modified	: 10th January 2016
 */
 
+#include <cstring>
 #include "Solaire/Core/Iterator.hpp"
 #include "Solaire/Core/Allocator.hpp"
 
