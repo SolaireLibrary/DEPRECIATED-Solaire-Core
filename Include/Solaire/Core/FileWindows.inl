@@ -1,0 +1,261 @@
+//Copyright 2015 Adam Smith
+//
+//Licensed under the Apache License, Version 2.0 (the "License");
+//you may not use this file except in compliance with the License.
+//You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+//Unless required by applicable law or agreed to in writing, software
+//distributed under the License is distributed on an "AS IS" BASIS,
+//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//See the License for the specific language governing permissions and
+//limitations under the License.
+
+// Contact :
+// Email             : solairelibrary@mail.com
+// GitHub repository : https://github.com/SolaireLibrary/SolaireCPP
+
+/*!
+	\file FileWindows.inl
+	\brief
+	\author
+	Created			: Adam Smith
+	Last modified	: Adam Smith
+	\version 1.0
+	\date
+	Created			: 20th November 2015
+	Last Modified	: 15th January 2016
+*/
+
+namespace Solaire { namespace File {
+
+    namespace Implementation {
+
+        const char* const makeCString(const StringConstant& aString, char* aPath) {
+            const int32_t size = aString.size();
+            aPath[size] = '\0';
+            if(aString.isContiguous()) {
+                std::memcpy(aPath, &aString[0], size);
+            }else {
+                for(int32_t i = 0; i < size; ++i) aPath[i] = aString[i];
+            }
+            return aPath;
+        }
+
+        /*static std::map<std::string, HANDLE> FILE_TABLE;
+
+        bool ImplementationOpenFile(const std::string& aFilename){
+            if(FILE_TABLE.find(aFilename) != FILE_TABLE.end()) return true;
+
+            //! \bug read-only files are not handled
+            const HANDLE handle = CreateFileA(
+                aFilename.c_str(),
+                GENERIC_READ | GENERIC_WRITE,
+                0,
+                nullptr,
+                OPEN_EXISTING,
+                FILE_ATTRIBUTE_NORMAL,
+                nullptr
+                );
+
+            if(handle != INVALID_HANDLE_VALUE) {
+                FILE_TABLE.emplace(aFilename, handle);
+                return true;
+            }else {
+                return false;
+            }
+        }
+
+        bool ImplementationCloseFile(const std::string& aFilename) {
+            const auto it = FILE_TABLE.find(aFilename);
+            if(it == FILE_TABLE.end()) return false;
+            if(! CloseHandle(it->second)) return false;
+            FILE_TABLE.erase(it);
+            return true;
+        }
+
+        bool ImplementationOpenFile(const char* const aFilename){
+            return ImplementationOpenFile(std::string(aFilename));
+        }
+
+        bool ImplementationCloseFile(const char* aFilename) {
+            return ImplementationCloseFile(std::string(aFilename));
+        }*/
+    }
+
+    AttributeFlags SOLAIRE_EXPORT_CALL getAttributes(const StringConstant& aFilename) throw() {
+        char buffer[MAX_PATH_LENGTH + 1];
+        const char* const filename = Implementation::makeCString(aFilename, buffer);
+
+        const DWORD attributes = GetFileAttributesA(filename);
+        DWORD binaryType;
+        const BOOL executable = GetBinaryTypeA(filename, &binaryType);
+
+        AttributeFlags tmp = FLAG_NONE;
+        if(attributes & FILE_ATTRIBUTE_HIDDEN) tmp |= FLAG_HIDDEN;
+        if(attributes & FILE_ATTRIBUTE_DIRECTORY) tmp |= FLAG_DIRECTORY;
+        else tmp |= FLAG_FILE;
+        if(attributes & FILE_ATTRIBUTE_READONLY) tmp |= FLAG_READ;
+        else tmp |= FLAG_READ | FLAG_WRITE;
+        if(executable) tmp |= FLAG_EXECUTABLE;
+        if(tmp != FLAG_NONE) tmp |= FLAG_EXISTS;
+
+        return tmp;
+    }
+
+    bool SOLAIRE_EXPORT_CALL createFile(const StringConstant& aFilename, const AttributeFlags aAttributes) throw() {
+        char buffer[MAX_PATH_LENGTH + 1];
+        const char* const filename = Implementation::makeCString(aFilename, buffer);
+
+        DWORD access = 0;
+        if (aAttributes & FLAG_READ) access |= GENERIC_READ;
+        if (aAttributes & FLAG_WRITE) access |= GENERIC_WRITE;
+
+        DWORD flags = 0;
+        if (aAttributes & FLAG_HIDDEN) flags |= FILE_ATTRIBUTE_HIDDEN;
+        if ((aAttributes & FLAG_READ) != 0 && (aAttributes & FLAG_WRITE) == 0) flags |= FILE_ATTRIBUTE_READONLY;
+        if (flags == 0) flags = FILE_ATTRIBUTE_NORMAL;
+
+        const HANDLE handle = CreateFileA(
+            filename,
+            access,
+            0,
+            nullptr,
+            CREATE_NEW,
+            flags,
+            nullptr
+        );
+
+        if(handle != INVALID_HANDLE_VALUE) {
+            CloseHandle(handle);
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    bool SOLAIRE_EXPORT_CALL createDirectory(const StringConstant& aFilename) throw() {
+        char buffer[MAX_PATH_LENGTH + 1];
+        return CreateDirectoryA(Implementation::makeCString(aFilename, buffer), nullptr) > 0;
+    }
+
+    bool SOLAIRE_EXPORT_CALL deleteFile(const StringConstant& aFilename) throw() {
+        char buffer[MAX_PATH_LENGTH + 1];
+        return DeleteFileA(Implementation::makeCString(aFilename, buffer)) > 0;
+    }
+
+    bool SOLAIRE_EXPORT_CALL deleteDirectory(const StringConstant& aFilename) throw() {
+        char buffer[MAX_PATH_LENGTH + 1];
+        return DeleteFileA(Implementation::makeCString(aFilename, buffer)) > 0;
+    }
+
+    STLString SOLAIRE_EXPORT_CALL getParent(const StringConstant& aFilename) throw() {
+        const int32_t length = aFilename.size();
+        const int32_t seperator = aFilename.findLastOf(FILE_SEPERATOR);
+
+        STLString path;
+        if(seperator != length) for(int32_t i = 0; i <= seperator; ++i) path.pushBack(aFilename[i]);
+        return path;
+    }
+
+    STLString SOLAIRE_EXPORT_CALL getName(const StringConstant& aFilename) throw() {
+        const int32_t length = aFilename.size();
+        const int32_t seperator = aFilename.findLastOf(FILE_SEPERATOR);
+        const int32_t end = aFilename.findLastOf('.');
+
+        if(seperator == length) {
+            return STLString();
+        } else {
+            STLString tmp;
+            for(int32_t i = seperator + 1; i < end; ++i) tmp.pushBack(aFilename[i]);
+            return tmp;
+        }
+    }
+
+    STLString SOLAIRE_EXPORT_CALL getExtension(const StringConstant& aFilename) throw() {
+        const int32_t length = aFilename.size();
+        const int32_t seperator = aFilename.findLastOf('.');
+
+        if(seperator == length) {
+            return STLString();
+        } else {
+            STLString tmp;
+            for(int32_t i = 0; i <= seperator; ++i) tmp.pushBack(aFilename[i]);
+            return tmp;
+        }
+    }
+
+    int32_t SOLAIRE_EXPORT_CALL size(const StringConstant&) throw() {
+        /*const std::string filename(aFilename);
+
+        bool opened = false;
+        auto it = FILE_TABLE.find(filename);
+        if (it == FILE_TABLE.end()) {
+            opened = true;
+            if (!ImplementationOpenFile(filename)) return 0;
+            it = FILE_TABLE.find(filename);
+        }
+
+        const uint32_t size = GetFileSize(it->second, nullptr);
+
+        if(opened) {
+			ImplementationCloseFile(filename);
+        }
+
+        return size;*/
+    }
+
+    bool SOLAIRE_EXPORT_CALL getFileList(const StringConstant& aDirectory, Stack<STLString>& aFiles) throw() {
+        WIN32_FIND_DATAA findData;
+        HANDLE handle = INVALID_HANDLE_VALUE;
+
+        char directory[MAX_PATH_LENGTH + 1];
+        Implementation::makeCString(aDirectory, directory);
+
+        uint32_t fileCount = 0;
+
+        handle = FindFirstFileA(directory, &findData);
+        if (handle == INVALID_HANDLE_VALUE) return 0;
+        do{
+            aFiles.pushBack(STLString(findData.cFileName));
+        } while(FindNextFileA(handle, &findData) != 0);
+
+        FindClose(handle);
+
+        return fileCount;
+    }
+
+    STLString SOLAIRE_EXPORT_CALL getCurrentDirectory() throw() {
+        char buffer[MAX_PATH_LENGTH + 1];
+        const bool tmp = GetCurrentDirectoryA(MAX_PATH_LENGTH, buffer);
+        return tmp ? STLString(buffer) : STLString();
+    }
+
+    STLString SOLAIRE_EXPORT_CALL getTemporaryDirectory() throw() {
+        char buffer[MAX_PATH_LENGTH + 1];
+        const bool tmp = GetTempPathA(MAX_PATH_LENGTH, buffer);
+        return tmp ? STLString(buffer) : STLString();
+    }
+
+    bool SOLAIRE_EXPORT_CALL rename(const StringConstant& aOldName, const StringConstant& aNewName) throw() {
+        //! \todo Optimise Rename
+        if(! copy(aOldName, aNewName)) return false;
+        if(! deleteFile(aOldName)){
+            return deleteFile(aNewName);
+        }
+        return true;
+    }
+
+    bool SOLAIRE_EXPORT_CALL copy(const StringConstant& aSrc, const StringConstant& aDst) throw() {
+        char bufferA[MAX_PATH_LENGTH + 1];
+        char bufferB[MAX_PATH_LENGTH + 1];
+        return CopyFileA(Implementation::makeCString(aSrc, bufferA), Implementation::makeCString(aDst, bufferB), FALSE) > 0;
+    }
+
+    bool SOLAIRE_EXPORT_CALL move(const StringConstant& aFilename, const StringConstant& aTarget) throw() {
+        char bufferA[MAX_PATH_LENGTH + 1];
+        char bufferB[MAX_PATH_LENGTH + 1];
+        return MoveFileA(Implementation::makeCString(aFilename, bufferA), Implementation::makeCString(aTarget, bufferB)) > 0;
+    }
+}}
