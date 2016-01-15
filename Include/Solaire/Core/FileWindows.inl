@@ -43,14 +43,12 @@ namespace Solaire { namespace File {
             return aPath;
         }
 
-        /*static std::map<std::string, HANDLE> FILE_TABLE;
-
-        bool ImplementationOpenFile(const std::string& aFilename){
-            if(FILE_TABLE.find(aFilename) != FILE_TABLE.end()) return true;
-
+         bool openFile(const StringConstant& aFilename, HANDLE& aHandle){
+            char filename[MAX_PATH_LENGTH + 1];
+            Implementation::makeCString(aFilename, filename);
             //! \bug read-only files are not handled
             const HANDLE handle = CreateFileA(
-                aFilename.c_str(),
+                filename,
                 GENERIC_READ | GENERIC_WRITE,
                 0,
                 nullptr,
@@ -59,29 +57,12 @@ namespace Solaire { namespace File {
                 nullptr
                 );
 
-            if(handle != INVALID_HANDLE_VALUE) {
-                FILE_TABLE.emplace(aFilename, handle);
-                return true;
-            }else {
-                return false;
-            }
+            return handle != INVALID_HANDLE_VALUE;
         }
 
-        bool ImplementationCloseFile(const std::string& aFilename) {
-            const auto it = FILE_TABLE.find(aFilename);
-            if(it == FILE_TABLE.end()) return false;
-            if(! CloseHandle(it->second)) return false;
-            FILE_TABLE.erase(it);
-            return true;
+        bool closeFile(HANDLE& aHandle) {
+            return CloseHandle(aHandle);
         }
-
-        bool ImplementationOpenFile(const char* const aFilename){
-            return ImplementationOpenFile(std::string(aFilename));
-        }
-
-        bool ImplementationCloseFile(const char* aFilename) {
-            return ImplementationCloseFile(std::string(aFilename));
-        }*/
     }
 
     AttributeFlags SOLAIRE_EXPORT_CALL getAttributes(const StringConstant& aFilename) throw() {
@@ -186,24 +167,12 @@ namespace Solaire { namespace File {
         }
     }
 
-    int32_t SOLAIRE_EXPORT_CALL size(const StringConstant&) throw() {
-        /*const std::string filename(aFilename);
-
-        bool opened = false;
-        auto it = FILE_TABLE.find(filename);
-        if (it == FILE_TABLE.end()) {
-            opened = true;
-            if (!ImplementationOpenFile(filename)) return 0;
-            it = FILE_TABLE.find(filename);
-        }
-
-        const uint32_t size = GetFileSize(it->second, nullptr);
-
-        if(opened) {
-			ImplementationCloseFile(filename);
-        }
-
-        return size;*/
+    int32_t SOLAIRE_EXPORT_CALL size(const StringConstant& aFilename) throw() {
+        HANDLE handle;
+        if(! Implementation::openFile(aFilename, handle)) return 0;
+        const int32_t size = GetFileSize(handle, nullptr);
+        Implementation::closeFile(handle);
+        return size;
     }
 
     bool SOLAIRE_EXPORT_CALL getFileList(const StringConstant& aDirectory, Stack<STLString>& aFiles) throw() {
