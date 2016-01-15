@@ -43,21 +43,33 @@ namespace Solaire { namespace File {
             return aPath;
         }
 
-         bool openFile(const StringConstant& aFilename, HANDLE& aHandle){
+         bool openFile(const StringConstant& aFilename, HANDLE& aHandle, const int32_t aFlags) {
             char filename[MAX_PATH_LENGTH + 1];
             Implementation::makeCString(aFilename, filename);
             //! \bug read-only files are not handled
             const HANDLE handle = CreateFileA(
                 filename,
-                GENERIC_READ | GENERIC_WRITE,
+                aFlags,
                 0,
                 nullptr,
                 OPEN_EXISTING,
                 FILE_ATTRIBUTE_NORMAL,
                 nullptr
-                );
+            );
 
             return handle != INVALID_HANDLE_VALUE;
+        }
+
+         bool openRFile(const StringConstant& aFilename, HANDLE& aHandle) {
+            return openFile(aFilename, aHandle, GENERIC_READ);
+        }
+
+         bool openWFile(const StringConstant& aFilename, HANDLE& aHandle) {
+            return openFile(aFilename, aHandle, GENERIC_WRITE);
+        }
+
+         bool openRWFile(const StringConstant& aFilename, HANDLE& aHandle) {
+            return openFile(aFilename, aHandle, GENERIC_READ | GENERIC_WRITE);
         }
 
         bool closeFile(HANDLE& aHandle) {
@@ -169,7 +181,7 @@ namespace Solaire { namespace File {
 
     int32_t SOLAIRE_EXPORT_CALL size(const StringConstant& aFilename) throw() {
         HANDLE handle;
-        if(! Implementation::openFile(aFilename, handle)) return 0;
+        if(! Implementation::openRFile(aFilename, handle)) return 0;
         const int32_t size = GetFileSize(handle, nullptr);
         Implementation::closeFile(handle);
         return size;
