@@ -46,7 +46,6 @@ namespace Solaire { namespace File {
          bool openFile(const StringConstant& aFilename, HANDLE& aHandle, const int32_t aFlags) {
             char filename[MAX_PATH_LENGTH + 1];
             Implementation::makeCString(aFilename, filename);
-            //! \bug read-only files are not handled
             const HANDLE handle = CreateFileA(
                 filename,
                 aFlags,
