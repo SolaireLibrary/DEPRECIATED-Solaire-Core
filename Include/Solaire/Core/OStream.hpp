@@ -32,7 +32,7 @@
 
 #include <cstdint>
 #include "Solaire/Core/ModuleHeader.hpp"
-#include "Solaire/Core/Container.hpp"
+#include "Solaire/Core/String.hpp"
 
 namespace Solaire {
 
@@ -63,7 +63,7 @@ namespace Solaire {
             return *this;
         }
 
-        SOLAIRE_FORCE_INLINE OStream& operator<<(const StringConstant& aString) {
+        SOLAIRE_FORCE_INLINE OStream& operator<<(const StringConstant<char>& aString) {
             if(aString.isContiguous()) {
                 write(&aString[0], aString.size());
             }else {

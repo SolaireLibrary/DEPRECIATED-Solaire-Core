@@ -66,26 +66,26 @@ namespace Solaire { namespace File{
 		#endif
 	};
 
-	AttributeFlags SOLAIRE_EXPORT_CALL getAttributes(const StringConstant&) throw();
+	AttributeFlags SOLAIRE_EXPORT_CALL getAttributes(const StringConstant<char>&) throw();
 
-    bool SOLAIRE_EXPORT_CALL createFile(const StringConstant&, const AttributeFlags) throw();
-    bool SOLAIRE_EXPORT_CALL createDirectory(const StringConstant&) throw();
-    bool SOLAIRE_EXPORT_CALL deleteFile(const StringConstant&) throw();
-    bool SOLAIRE_EXPORT_CALL deleteDirectory(const StringConstant&) throw();
+    bool SOLAIRE_EXPORT_CALL createFile(const StringConstant<char>&, const AttributeFlags) throw();
+    bool SOLAIRE_EXPORT_CALL createDirectory(const StringConstant<char>&) throw();
+    bool SOLAIRE_EXPORT_CALL deleteFile(const StringConstant<char>&) throw();
+    bool SOLAIRE_EXPORT_CALL deleteDirectory(const StringConstant<char>&) throw();
 
-    STLString SOLAIRE_EXPORT_CALL getParent(const StringConstant&) throw();
-    STLString SOLAIRE_EXPORT_CALL getName(const StringConstant&) throw();
-    STLString SOLAIRE_EXPORT_CALL getExtension(const StringConstant&) throw();
+    STLString SOLAIRE_EXPORT_CALL getParent(const StringConstant<char>&) throw();
+    STLString SOLAIRE_EXPORT_CALL getName(const StringConstant<char>&) throw();
+    STLString SOLAIRE_EXPORT_CALL getExtension(const StringConstant<char>&) throw();
 
-    int32_t SOLAIRE_EXPORT_CALL size(const StringConstant&) throw();
+    int32_t SOLAIRE_EXPORT_CALL size(const StringConstant<char>&) throw();
 
-    bool SOLAIRE_EXPORT_CALL getFileList(const StringConstant&, Stack<STLString>&) throw();
+    bool SOLAIRE_EXPORT_CALL getFileList(const StringConstant<char>&, Stack<STLString>&) throw();
     STLString SOLAIRE_EXPORT_CALL getCurrentDirectory() throw();
     STLString SOLAIRE_EXPORT_CALL getTemporaryDirectory() throw();
 
-    bool SOLAIRE_EXPORT_CALL rename(const StringConstant&, const StringConstant&) throw();
-    bool SOLAIRE_EXPORT_CALL copy(const StringConstant&, const StringConstant&) throw();
-    bool SOLAIRE_EXPORT_CALL move(const StringConstant&, const StringConstant&) throw();
+    bool SOLAIRE_EXPORT_CALL rename(const StringConstant<char>&, const StringConstant<char>&) throw();
+    bool SOLAIRE_EXPORT_CALL copy(const StringConstant<char>&, const StringConstant<char>&) throw();
+    bool SOLAIRE_EXPORT_CALL move(const StringConstant<char>&, const StringConstant<char>&) throw();
 }}
 
 #if SOLAIRE_OS == SOLAIRE_WINDOWS

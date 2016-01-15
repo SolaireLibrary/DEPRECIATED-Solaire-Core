@@ -268,9 +268,6 @@ namespace Solaire {
         }
 	};
 
-	typedef StaticContainer<const char> StringConstant;
-	typedef List<char> String;
-
 }
 
 

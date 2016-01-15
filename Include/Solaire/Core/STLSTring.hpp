@@ -32,10 +32,11 @@
 
 #include <string>
 #include "Solaire/Core/Allocator.hpp"
+#include "Solaire/Core/String.hpp"
 
 namespace Solaire{
 
-    class STLString : public String {
+    class STLString : public String<char> {
 	public:
 		typedef char Type;
 		typedef const char ConstType;

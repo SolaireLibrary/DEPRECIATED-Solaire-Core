@@ -32,7 +32,7 @@ namespace Solaire { namespace File {
 
     namespace Implementation {
 
-        const char* const makeCString(const StringConstant& aString, char* aPath) {
+        const char* const makeCString(const StringConstant<char>& aString, char* aPath) {
             const int32_t size = aString.size();
             aPath[size] = '\0';
             if(aString.isContiguous()) {
@@ -43,7 +43,7 @@ namespace Solaire { namespace File {
             return aPath;
         }
 
-         bool openFile(const StringConstant& aFilename, HANDLE& aHandle, const int32_t aFlags) {
+         bool openFile(const StringConstant<char>& aFilename, HANDLE& aHandle, const int32_t aFlags) {
             char filename[MAX_PATH_LENGTH + 1];
             Implementation::makeCString(aFilename, filename);
             const HANDLE handle = CreateFileA(
@@ -59,15 +59,15 @@ namespace Solaire { namespace File {
             return handle != INVALID_HANDLE_VALUE;
         }
 
-         bool openRFile(const StringConstant& aFilename, HANDLE& aHandle) {
+         bool openRFile(const StringConstant<char>& aFilename, HANDLE& aHandle) {
             return openFile(aFilename, aHandle, GENERIC_READ);
         }
 
-         bool openWFile(const StringConstant& aFilename, HANDLE& aHandle) {
+         bool openWFile(const StringConstant<char>& aFilename, HANDLE& aHandle) {
             return openFile(aFilename, aHandle, GENERIC_WRITE);
         }
 
-         bool openRWFile(const StringConstant& aFilename, HANDLE& aHandle) {
+         bool openRWFile(const StringConstant<char>& aFilename, HANDLE& aHandle) {
             return openFile(aFilename, aHandle, GENERIC_READ | GENERIC_WRITE);
         }
 
@@ -76,7 +76,7 @@ namespace Solaire { namespace File {
         }
     }
 
-    AttributeFlags SOLAIRE_EXPORT_CALL getAttributes(const StringConstant& aFilename) throw() {
+    AttributeFlags SOLAIRE_EXPORT_CALL getAttributes(const StringConstant<char>& aFilename) throw() {
         char buffer[MAX_PATH_LENGTH + 1];
         const char* const filename = Implementation::makeCString(aFilename, buffer);
 
@@ -96,7 +96,7 @@ namespace Solaire { namespace File {
         return tmp;
     }
 
-    bool SOLAIRE_EXPORT_CALL createFile(const StringConstant& aFilename, const AttributeFlags aAttributes) throw() {
+    bool SOLAIRE_EXPORT_CALL createFile(const StringConstant<char>& aFilename, const AttributeFlags aAttributes) throw() {
         char buffer[MAX_PATH_LENGTH + 1];
         const char* const filename = Implementation::makeCString(aFilename, buffer);
 
@@ -127,22 +127,22 @@ namespace Solaire { namespace File {
         }
     }
 
-    bool SOLAIRE_EXPORT_CALL createDirectory(const StringConstant& aFilename) throw() {
+    bool SOLAIRE_EXPORT_CALL createDirectory(const StringConstant<char>& aFilename) throw() {
         char buffer[MAX_PATH_LENGTH + 1];
         return CreateDirectoryA(Implementation::makeCString(aFilename, buffer), nullptr) > 0;
     }
 
-    bool SOLAIRE_EXPORT_CALL deleteFile(const StringConstant& aFilename) throw() {
+    bool SOLAIRE_EXPORT_CALL deleteFile(const StringConstant<char>& aFilename) throw() {
         char buffer[MAX_PATH_LENGTH + 1];
         return DeleteFileA(Implementation::makeCString(aFilename, buffer)) > 0;
     }
 
-    bool SOLAIRE_EXPORT_CALL deleteDirectory(const StringConstant& aFilename) throw() {
+    bool SOLAIRE_EXPORT_CALL deleteDirectory(const StringConstant<char>& aFilename) throw() {
         char buffer[MAX_PATH_LENGTH + 1];
         return DeleteFileA(Implementation::makeCString(aFilename, buffer)) > 0;
     }
 
-    STLString SOLAIRE_EXPORT_CALL getParent(const StringConstant& aFilename) throw() {
+    STLString SOLAIRE_EXPORT_CALL getParent(const StringConstant<char>& aFilename) throw() {
         const int32_t length = aFilename.size();
         const int32_t seperator = aFilename.findLastOf(FILE_SEPERATOR);
 
@@ -151,7 +151,7 @@ namespace Solaire { namespace File {
         return path;
     }
 
-    STLString SOLAIRE_EXPORT_CALL getName(const StringConstant& aFilename) throw() {
+    STLString SOLAIRE_EXPORT_CALL getName(const StringConstant<char>& aFilename) throw() {
         const int32_t length = aFilename.size();
         const int32_t seperator = aFilename.findLastOf(FILE_SEPERATOR);
         const int32_t end = aFilename.findLastOf('.');
@@ -165,7 +165,7 @@ namespace Solaire { namespace File {
         }
     }
 
-    STLString SOLAIRE_EXPORT_CALL getExtension(const StringConstant& aFilename) throw() {
+    STLString SOLAIRE_EXPORT_CALL getExtension(const StringConstant<char>& aFilename) throw() {
         const int32_t length = aFilename.size();
         const int32_t seperator = aFilename.findLastOf('.');
 
@@ -178,7 +178,7 @@ namespace Solaire { namespace File {
         }
     }
 
-    int32_t SOLAIRE_EXPORT_CALL size(const StringConstant& aFilename) throw() {
+    int32_t SOLAIRE_EXPORT_CALL size(const StringConstant<char>& aFilename) throw() {
         HANDLE handle;
         if(! Implementation::openRFile(aFilename, handle)) return 0;
         const int32_t size = GetFileSize(handle, nullptr);
@@ -186,7 +186,7 @@ namespace Solaire { namespace File {
         return size;
     }
 
-    bool SOLAIRE_EXPORT_CALL getFileList(const StringConstant& aDirectory, Stack<STLString>& aFiles) throw() {
+    bool SOLAIRE_EXPORT_CALL getFileList(const StringConstant<char>& aDirectory, Stack<STLString>& aFiles) throw() {
         WIN32_FIND_DATAA findData;
         HANDLE handle = INVALID_HANDLE_VALUE;
 
@@ -218,7 +218,7 @@ namespace Solaire { namespace File {
         return tmp ? STLString(buffer) : STLString();
     }
 
-    bool SOLAIRE_EXPORT_CALL rename(const StringConstant& aOldName, const StringConstant& aNewName) throw() {
+    bool SOLAIRE_EXPORT_CALL rename(const StringConstant<char>& aOldName, const StringConstant<char>& aNewName) throw() {
         //! \todo Optimise Rename
         if(! copy(aOldName, aNewName)) return false;
         if(! deleteFile(aOldName)){
@@ -227,13 +227,13 @@ namespace Solaire { namespace File {
         return true;
     }
 
-    bool SOLAIRE_EXPORT_CALL copy(const StringConstant& aSrc, const StringConstant& aDst) throw() {
+    bool SOLAIRE_EXPORT_CALL copy(const StringConstant<char>& aSrc, const StringConstant<char>& aDst) throw() {
         char bufferA[MAX_PATH_LENGTH + 1];
         char bufferB[MAX_PATH_LENGTH + 1];
         return CopyFileA(Implementation::makeCString(aSrc, bufferA), Implementation::makeCString(aDst, bufferB), FALSE) > 0;
     }
 
-    bool SOLAIRE_EXPORT_CALL move(const StringConstant& aFilename, const StringConstant& aTarget) throw() {
+    bool SOLAIRE_EXPORT_CALL move(const StringConstant<char>& aFilename, const StringConstant<char>& aTarget) throw() {
         char bufferA[MAX_PATH_LENGTH + 1];
         char bufferB[MAX_PATH_LENGTH + 1];
         return MoveFileA(Implementation::makeCString(aFilename, bufferA), Implementation::makeCString(aTarget, bufferB)) > 0;
