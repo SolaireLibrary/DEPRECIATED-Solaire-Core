@@ -53,10 +53,49 @@ namespace Solaire {
             return *this;
         };
 
-        void operator+=(const StringConstant<T>& aString) throw() {
+        String<T>& operator+=(const StringConstant<T>& aString) throw() {
             const int32_t length = aString.size();
             for(int32_t i = 0; i < length; ++i) this->pushBack(aString[i]);
             return *this;
+        };
+
+        String<T>& operator+=(int8_t aValue) throw() {
+            return operator+=(static_cast<int32_t>(aValue));
+        };
+
+        String<T>& operator+=(int16_t aValue) throw() {
+            return operator+=(static_cast<int32_t>(aValue));
+        };
+
+        String<T>& operator+=(int32_t aValue) throw() {
+            char buf[32];
+            int i = 30;
+            for(i; aValue && i ; --i, aValue /= 10) buf[i] = "0123456789abcdef"[aValue % 10];
+            for(i; i < 30; ++i) this->pushBack(buf[i]);
+            return *this;
+        };
+
+        String<T>& operator+=(int64_t aValue) throw() {
+            //! \bug Values outside range of int32_t are lost
+            return operator+=(static_cast<int32_t>(aValue));
+        };
+
+        String<T>& operator+=(uint8_t aValue) throw() {
+            return operator+=(static_cast<int32_t>(aValue));
+        };
+
+        String<T>& operator+=(uint16_t aValue) throw() {
+            return operator+=(static_cast<int32_t>(aValue));
+        };
+
+        String<T>& operator+=(uint32_t aValue) throw() {
+            //! \bug Values outside range of int32_t are lost
+            return operator+=(static_cast<int32_t>(aValue));
+        };
+
+        String<T>& operator+=(uint64_t aValue) throw() {
+            //! \bug Values outside range of int32_t are lost
+            return operator+=(static_cast<int32_t>(aValue));
         };
 
 	};
