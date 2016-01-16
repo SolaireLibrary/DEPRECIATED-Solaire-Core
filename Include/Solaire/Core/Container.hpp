@@ -42,8 +42,6 @@ namespace Solaire {
         typedef T Type;
         typedef T* Pointer;
         typedef T& Reference;
-        typedef const T* ConstPointer;
-        typedef const T& ConstReference;
     protected:
         virtual Pointer SOLAIRE_EXPORT_CALL getPtr(int32_t) throw() = 0;
         virtual SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL begin_() throw() = 0;
@@ -61,7 +59,7 @@ namespace Solaire {
             return *getPtr(aIndex);
         }
 
-        SOLAIRE_FORCE_INLINE ConstReference operator[](const int32_t aIndex) const throw() {
+        SOLAIRE_FORCE_INLINE const Reference operator[](const int32_t aIndex) const throw() {
             return *const_cast<StaticContainer<T>*>(this)->getPtr(aIndex);
         }
 
@@ -267,6 +265,28 @@ namespace Solaire {
         SOLAIRE_FORCE_INLINE operator const List<const T>&() const throw() {
             return *reinterpret_cast<List<const T>*>(this);
         }
+	};
+
+	template<class K, class T>
+	SOLAIRE_EXPORT_INTERFACE Map {
+    public:
+        typedef K KeyType;
+        typedef K* KeyPointer;
+        typedef K& KeyReference;
+        typedef std::pair<K,T> Entry;
+	public:
+		virtual  SOLAIRE_EXPORT_CALL ~Map() throw() {}
+
+		virtual T& SOLAIRE_EXPORT_CALL emplace(const K&, const T&) throw() = 0;
+		virtual const T& SOLAIRE_EXPORT_CALL get(const K&) const throw() = 0;
+		virtual T& SOLAIRE_EXPORT_CALL get(const K&) throw() = 0;
+		virtual bool SOLAIRE_EXPORT_CALL contains(const K&) const throw() = 0;
+		virtual bool SOLAIRE_EXPORT_CALL erase(const K&) const throw() = 0;
+
+		virtual void SOLAIRE_EXPORT_CALL clear() throw() = 0;
+        virtual int32_t SOLAIRE_EXPORT_CALL size() const throw() = 0;
+        virtual Allocator& SOLAIRE_EXPORT_CALL getAllocator() const throw() = 0;
+        virtual SharedAllocation<StaticContainer<Entry>> getEntries() const throw() = 0;
 	};
 
 }
