@@ -39,6 +39,9 @@ namespace Solaire {
 	template<class T>
 	SOLAIRE_EXPORT_INTERFACE StaticContainer {
     public:
+        template<class T2>
+        friend class StaticContainer;
+
         typedef T Type;
         typedef T* Pointer;
         typedef T& Reference;
@@ -48,6 +51,10 @@ namespace Solaire {
         virtual SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL end_() throw() = 0;
         virtual SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL rbegin_() throw() = 0;
         virtual SharedAllocation<Iterator<T>> SOLAIRE_EXPORT_CALL rend_() throw() = 0;
+
+        SOLAIRE_FORCE_INLINE const Type* getPtr(const int32_t aIndex) const throw() {
+            return const_cast<StaticContainer<T>*>(this)->getPtr(aIndex);
+        }
     public:
         virtual SOLAIRE_EXPORT_CALL ~StaticContainer() throw() {}
 
@@ -100,7 +107,7 @@ namespace Solaire {
         }
 
         SOLAIRE_FORCE_INLINE operator const StaticContainer<const T>&() const throw() {
-            return *reinterpret_cast<StaticContainer<const T>*>(this);
+            return *reinterpret_cast<const StaticContainer<const T>*>(this);
         }
 
         inline bool operator==(const StaticContainer<const T>& aOther) const throw() {
@@ -281,7 +288,7 @@ namespace Solaire {
 		virtual const T& SOLAIRE_EXPORT_CALL get(const K&) const throw() = 0;
 		virtual T& SOLAIRE_EXPORT_CALL get(const K&) throw() = 0;
 		virtual bool SOLAIRE_EXPORT_CALL contains(const K&) const throw() = 0;
-		virtual bool SOLAIRE_EXPORT_CALL erase(const K&) const throw() = 0;
+		virtual bool SOLAIRE_EXPORT_CALL erase(const K&) throw() = 0;
 
 		virtual void SOLAIRE_EXPORT_CALL clear() throw() = 0;
         virtual int32_t SOLAIRE_EXPORT_CALL size() const throw() = 0;
