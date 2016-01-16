@@ -128,7 +128,7 @@ namespace Solaire {
 
         STLIterator<T> operator+(const int32_t aCount) throw() {
             SharedAllocation<Iterator<T>> tmp = mIterator->copy();
-            tmp.increment(aCount);
+            tmp->increment(aCount);
             return STLIterator(tmp);
         }
 
