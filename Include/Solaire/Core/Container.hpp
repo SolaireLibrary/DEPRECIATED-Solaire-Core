@@ -79,11 +79,15 @@ namespace Solaire {
         }
 
         SOLAIRE_FORCE_INLINE STLIterator<const T> begin() const throw() {
-            return STLIterator<T>(const_cast<StaticContainer<T>*>(this)->begin_());
+            StaticContainer<T>* const p1 = const_cast<StaticContainer<T>*>(this);
+            StaticContainer<const T>* const p2 = reinterpret_cast<StaticContainer<const T>*>(p1);
+            return STLIterator<const T>(p2->begin_());
         }
 
         SOLAIRE_FORCE_INLINE STLIterator<const T> end() const throw() {
-            return STLIterator<T>(const_cast<StaticContainer<T>*>(this)->end_());
+            StaticContainer<T>* const p1 = const_cast<StaticContainer<T>*>(this);
+            StaticContainer<const T>* const p2 = reinterpret_cast<StaticContainer<const T>*>(p1);
+            return STLIterator<const T>(p2->end_());
         }
 
         SOLAIRE_FORCE_INLINE STLIterator<T> rbegin() throw() {
