@@ -111,6 +111,22 @@ namespace Solaire {
             aValue = readC();
             return *this;
         }
+
+        template<class T>
+        SOLAIRE_FORCE_INLINE T peak() throw() {
+            const int32_t offset = this->getOffset();
+            T tmp;
+            *this >> tmp;
+            this->setOffset(offset);
+            return tmp;
+        }
+
+        template<class T>
+        SOLAIRE_FORCE_INLINE bool ignore() throw() {
+            T tmp;
+            *this >> tmp;
+            return true;
+        }
     };
 
 }
