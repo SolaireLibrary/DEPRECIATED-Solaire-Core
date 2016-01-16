@@ -113,7 +113,7 @@ namespace Solaire {
         }
 
         template<class T>
-        SOLAIRE_FORCE_INLINE T peak() throw() {
+        SOLAIRE_FORCE_INLINE T peek() throw() {
             const int32_t offset = this->getOffset();
             T tmp;
             *this >> tmp;
