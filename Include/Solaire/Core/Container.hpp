@@ -298,6 +298,14 @@ namespace Solaire {
         virtual int32_t SOLAIRE_EXPORT_CALL size() const throw() = 0;
         virtual Allocator& SOLAIRE_EXPORT_CALL getAllocator() const throw() = 0;
         virtual SharedAllocation<StaticContainer<Entry>> getEntries() const throw() = 0;
+
+        SOLAIRE_FORCE_INLINE T& operator[](const K& aKey) throw() {
+            return this->get(aKey);
+        }
+
+        SOLAIRE_FORCE_INLINE const T& operator[](const K& aKey) const throw() {
+            return this->get(aKey);
+        }
 	};
 
 }
