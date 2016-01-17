@@ -64,10 +64,10 @@ namespace Solaire {
         }
 
         SOLAIRE_FORCE_INLINE OStream& operator<<(const StringConstant<char>& aString) {
+            const int32_t size = aString.size();
             if(aString.isContiguous()) {
-                write(&aString[0], aString.size());
+                if(size > 0) write(&aString[0], size);
             }else {
-                const int32_t size = aString.size();
                 for(int32_t i = 0; i < size; ++i) {
                     writeC(aString[i]);
                 }
