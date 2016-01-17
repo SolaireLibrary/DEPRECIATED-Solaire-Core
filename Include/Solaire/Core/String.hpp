@@ -64,21 +64,25 @@ namespace Solaire {
         };
 
         String<T>& operator+=(int8_t aValue) throw() {
-            return operator+=(static_cast<uint32_t>(aValue));
+            return operator+=(static_cast<int32_t>(aValue));
         };
 
         String<T>& operator+=(int16_t aValue) throw() {
-            return operator+=(static_cast<uint32_t>(aValue));
+            return operator+=(static_cast<int32_t>(aValue));
         };
 
         String<T>& operator+=(int32_t aValue) throw() {
-            //! \bug Values outside range of uint32_t are lost
-            return operator+=(static_cast<uint32_t>(aValue));
+            if(aValue < 0) {
+                this->pushBack('-');
+                return operator+=(static_cast<uint32_t>(aValue * -1));
+            }else {
+                return operator+=(static_cast<uint32_t>(aValue));
+            }
         };
 
         String<T>& operator+=(int64_t aValue) throw() {
             //! \bug Values outside range of uint32_t are lost
-            return operator+=(static_cast<uint32_t>(aValue));
+            return operator+=(static_cast<int32_t>(aValue));
         };
 
         String<T>& operator+=(uint8_t aValue) throw() {
