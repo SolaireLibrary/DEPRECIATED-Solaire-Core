@@ -64,47 +64,45 @@ namespace Solaire {
         };
 
         String<T>& operator+=(int8_t aValue) throw() {
-            return operator+=(static_cast<int32_t>(aValue));
+            return operator+=(static_cast<int64_t>(aValue));
         };
 
         String<T>& operator+=(int16_t aValue) throw() {
-            return operator+=(static_cast<int32_t>(aValue));
+            return operator+=(static_cast<int64_t>(aValue));
         };
 
         String<T>& operator+=(int32_t aValue) throw() {
-            if(aValue < 0) {
-                this->pushBack('-');
-                return operator+=(static_cast<uint32_t>(aValue * -1));
-            }else {
-                return operator+=(static_cast<uint32_t>(aValue));
-            }
+            return operator+=(static_cast<int64_t>(aValue));
         };
 
         String<T>& operator+=(int64_t aValue) throw() {
-            //! \bug Values outside range of uint32_t are lost
-            return operator+=(static_cast<int32_t>(aValue));
+            if(aValue < 0) {
+                this->pushBack('-');
+                return operator+=(static_cast<uint64_t>(aValue * -1));
+            }else {
+                return operator+=(static_cast<uint64_t>(aValue));
+            }
         };
 
         String<T>& operator+=(uint8_t aValue) throw() {
-            return operator+=(static_cast<uint32_t>(aValue));
+            return operator+=(static_cast<uint64_t>(aValue));
         };
 
         String<T>& operator+=(uint16_t aValue) throw() {
-            return operator+=(static_cast<uint32_t>(aValue));
+            return operator+=(static_cast<uint64_t>(aValue));
         };
 
-        template<const uint32_t BASE = 10, const char* CHARACTERS = Implementation::STRING_NUMERIC_CHARS>
         String<T>& operator+=(uint32_t aValue) throw() {
-            char buf[32];
-            uint32_t i = 30;
-            for(i; aValue && i ; --i, aValue /= BASE) buf[i] = CHARACTERS[aValue % BASE];
-            for(i; i <= 30; ++i) this->pushBack(buf[i]);
-            return *this;
+            return operator+=(static_cast<uint64_t>(aValue));
         }
 
+        template<const uint32_t BASE = 10, const char* CHARACTERS = Implementation::STRING_NUMERIC_CHARS>
         String<T>& operator+=(uint64_t aValue) throw() {
-            //! \bug Values outside range of uint32_t are lost
-            return operator+=(static_cast<uint32_t>(aValue));
+            char buf[130];
+            uint32_t i = 128;
+            for(i; aValue && i ; --i, aValue /= BASE) buf[i] = CHARACTERS[aValue % BASE];
+            for(i; i <= 128; ++i) this->pushBack(buf[i]);
+            return *this;
         };
 
 	};
