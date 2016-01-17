@@ -37,6 +37,10 @@ namespace Solaire {
     template<class T>
 	using StringConstant = StaticContainer<T>;
 
+	namespace Implementation {
+        static constexpr char STRING_NUMERIC_CHARS[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	}
+
     template<class T>
 	SOLAIRE_EXPORT_INTERFACE String : public List<T> {
     public:
@@ -60,42 +64,43 @@ namespace Solaire {
         };
 
         String<T>& operator+=(int8_t aValue) throw() {
-            return operator+=(static_cast<int32_t>(aValue));
+            return operator+=(static_cast<uint32_t>(aValue));
         };
 
         String<T>& operator+=(int16_t aValue) throw() {
-            return operator+=(static_cast<int32_t>(aValue));
+            return operator+=(static_cast<uint32_t>(aValue));
         };
 
         String<T>& operator+=(int32_t aValue) throw() {
-            char buf[32];
-            int i = 30;
-            for(i; aValue && i ; --i, aValue /= 10) buf[i] = "0123456789abcdef"[aValue % 10];
-            for(i; i <= 30; ++i) this->pushBack(buf[i]);
-            return *this;
+            //! \bug Values outside range of uint32_t are lost
+            return operator+=(static_cast<uint32_t>(aValue));
         };
 
         String<T>& operator+=(int64_t aValue) throw() {
-            //! \bug Values outside range of int32_t are lost
-            return operator+=(static_cast<int32_t>(aValue));
+            //! \bug Values outside range of uint32_t are lost
+            return operator+=(static_cast<uint32_t>(aValue));
         };
 
         String<T>& operator+=(uint8_t aValue) throw() {
-            return operator+=(static_cast<int32_t>(aValue));
+            return operator+=(static_cast<uint32_t>(aValue));
         };
 
         String<T>& operator+=(uint16_t aValue) throw() {
-            return operator+=(static_cast<int32_t>(aValue));
+            return operator+=(static_cast<uint32_t>(aValue));
         };
 
+        template<const uint32_t BASE = 10, const char* CHARACTERS = Implementation::STRING_NUMERIC_CHARS>
         String<T>& operator+=(uint32_t aValue) throw() {
-            //! \bug Values outside range of int32_t are lost
-            return operator+=(static_cast<int32_t>(aValue));
-        };
+            char buf[32];
+            uint32_t i = 30;
+            for(i; aValue && i ; --i, aValue /= BASE) buf[i] = CHARACTERS[aValue % BASE];
+            for(i; i <= 30; ++i) this->pushBack(buf[i]);
+            return *this;
+        }
 
         String<T>& operator+=(uint64_t aValue) throw() {
-            //! \bug Values outside range of int32_t are lost
-            return operator+=(static_cast<int32_t>(aValue));
+            //! \bug Values outside range of uint32_t are lost
+            return operator+=(static_cast<uint32_t>(aValue));
         };
 
 	};
