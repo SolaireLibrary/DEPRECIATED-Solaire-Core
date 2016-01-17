@@ -104,6 +104,9 @@ namespace Solaire {
 		}
     };
 
+    Allocator& getDefaultAllocator() throw();
+    void setDefaultAllocator(Allocator&) throw();
+
 }
 
 #endif

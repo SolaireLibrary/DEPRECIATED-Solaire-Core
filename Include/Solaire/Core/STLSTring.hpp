@@ -131,7 +131,7 @@ namespace Solaire{
         }
 
         Allocator& SOLAIRE_EXPORT_CALL getAllocator() const throw() override {
-            return DEFAULT_ALLOCATOR;
+            return getDefaultAllocator();
         }
 
         // Inherited from Stack

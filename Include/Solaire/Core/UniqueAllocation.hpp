@@ -31,6 +31,7 @@
 	Last Modified	: 4th January 2015
 */
 
+#include <algorithm>
 #include "AllocatorI.hpp"
 
 namespace Solaire {

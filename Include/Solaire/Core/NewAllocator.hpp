@@ -78,7 +78,5 @@ namespace Solaire{
 		}
 	};
 
-	static NewAllocator DEFAULT_ALLOCATOR;
-
 }
 #endif
