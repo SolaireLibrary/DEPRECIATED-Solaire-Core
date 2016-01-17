@@ -120,10 +120,15 @@ namespace Solaire {
 
         template<const uint32_t BASE = 10, const char* CHARACTERS = Implementation::STRING_NUMERIC_CHARS>
         String<T>& operator+=(uint64_t aValue) throw() {
-            char buf[130];
-            uint32_t i = 128;
-            for(i; aValue && i ; --i, aValue /= BASE) buf[i] = CHARACTERS[aValue % BASE];
-            for(i; i <= 128; ++i) this->pushBack(buf[i]);
+            if(aValue == 0){
+                this->pushBack(CHARACTERS[0]);
+            }else{
+                char buf[130];
+                uint32_t i = 128;
+                for(i; aValue && i ; --i, aValue /= BASE) buf[i] = CHARACTERS[aValue % BASE];
+                ++i;
+                for(i; i <= 128; ++i) this->pushBack(buf[i]);
+            }
             return *this;
         };
 
