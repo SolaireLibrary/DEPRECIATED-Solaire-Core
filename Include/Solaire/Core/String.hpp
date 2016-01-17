@@ -71,7 +71,7 @@ namespace Solaire {
             char buf[32];
             int i = 30;
             for(i; aValue && i ; --i, aValue /= 10) buf[i] = "0123456789abcdef"[aValue % 10];
-            for(i; i < 30; ++i) this->pushBack(buf[i]);
+            for(i; i <= 30; ++i) this->pushBack(buf[i]);
             return *this;
         };
 
