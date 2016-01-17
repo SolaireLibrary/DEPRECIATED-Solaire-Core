@@ -39,6 +39,28 @@ namespace Solaire {
 
 	namespace Implementation {
         static constexpr char STRING_NUMERIC_CHARS[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+        static constexpr uint64_t constexprPower(const uint64_t aValue, const uint64_t aExponent) {
+            return aExponent == 0 ? 1 : aExponent == 1 ? aValue : aValue * constexprPower(aValue, aExponent - 1);
+        }
+
+        static constexpr uint16_t POWERS_OF_10[] = {
+            constexprPower(10, 0),
+            constexprPower(10, 1),
+            constexprPower(10, 2),
+            constexprPower(10, 3),
+            constexprPower(10, 4),
+            constexprPower(10, 5),
+            constexprPower(10, 6),
+            constexprPower(10, 7),
+            constexprPower(10, 8),
+            constexprPower(10, 9),
+            constexprPower(10, 10),
+            constexprPower(10, 11),
+            constexprPower(10, 12),
+            constexprPower(10, 13),
+            constexprPower(10, 14)
+        };
 	}
 
     template<class T>
@@ -104,6 +126,74 @@ namespace Solaire {
             for(i; i <= 128; ++i) this->pushBack(buf[i]);
             return *this;
         };
+
+        explicit operator uint64_t() const throw() {
+            //! \todo Support different bases
+            int32_t begin = 0;
+            const int32_t end = this->size();
+            while(begin < end && this->operator[](begin) == '0') {
+                ++begin;
+            }
+
+            uint64_t value = 0;
+            uint8_t col = 0;
+            for(uint32_t i = begin; i < end; ++i, ++col) {
+                const char c = this->operator[](end - (i + 1));
+                if(c < '0' || c > '9') break;
+                value += static_cast<uint64_t>(c - '0') * Implementation::POWERS_OF_10[col];
+            }
+
+            return value;
+        }
+
+        explicit operator uint32_t() const throw() {
+            return static_cast<uint32_t>(static_cast<uint64_t>(*this));
+        }
+
+        explicit operator uint16_t() const throw() {
+            return static_cast<uint16_t>(static_cast<uint64_t>(*this));
+        }
+
+        explicit operator uint8_t() const throw() {
+            return static_cast<uint8_t>(static_cast<uint64_t>(*this));
+        }
+
+        explicit operator int64_t() const throw() {
+            //! \bug Does not parse last column
+            //! \todo Support different bases
+            bool sign = false;
+            int32_t begin = 0;
+            const int32_t end = this->size();
+            if(begin < end && this->operator[](begin) == '-'){
+                sign = true;
+                ++begin;
+            }
+            while(begin < end && this->operator[](begin) == '0') {
+                ++begin;
+            }
+
+            int64_t value = 0;
+            uint8_t col = 0;
+            for(uint32_t i = begin; i < end; ++i, ++col) {
+                const char c = this->operator[](end - (i + 1));
+                if(c < '0' || c > '9') break;
+                value += static_cast<int64_t>(c - '0') * Implementation::POWERS_OF_10[col];
+            }
+
+            return sign ? value * -1 : value;
+        }
+
+        explicit operator int32_t() const throw() {
+            return static_cast<int32_t>(static_cast<int64_t>(*this));
+        }
+
+        explicit operator int16_t() const throw() {
+            return static_cast<int16_t>(static_cast<int64_t>(*this));
+        }
+
+        explicit operator int8_t() const throw() {
+            return static_cast<int8_t>(static_cast<int64_t>(*this));
+        }
 
 	};
 
