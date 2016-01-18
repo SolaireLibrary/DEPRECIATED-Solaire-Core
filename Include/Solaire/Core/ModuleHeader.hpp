@@ -75,6 +75,13 @@
 	#define SOLAIRE_EXPORT_CALL SOLAIRE_DEFAULT_CALL
 #endif
 
+
+#ifdef SOLAIRE_DISABLE_MULTITHREADING
+    #define SOLAIRE_THREAD_LOCAL static
+#else
+    #define SOLAIRE_THREAD_LOCAL thread_local
+#endif
+
 namespace Solaire {
 
 	template<typename Type, size_t LENGTH>

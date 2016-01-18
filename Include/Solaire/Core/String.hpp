@@ -121,17 +121,17 @@ namespace Solaire {
             return static_cast<double>(high) + lowD;
         }
 
-        thread_local char CSTRING_BUF[1024];
+        SOLAIRE_THREAD_LOCAL char STRING_TO_CSTRING_BUF[1024];
 
         template<class T>
         static const char* stringToCString(const StringConstant<T>& aString) throw() {
             if(aString.isContiguous() && (std::is_same<T, char>::value || std::is_same<T, const char>::value)) {
                 return &aString[0];
             }else {
-                char* ptr = CSTRING_BUF;
+                char* ptr = STRING_TO_CSTRING_BUF;
                 const auto end = aString.end();
                 for(auto i = aString.begin(); i != end; ++i, ++ptr) *ptr = *i;
-                return CSTRING_BUF;
+                return STRING_TO_CSTRING_BUF;
             }
         }
 	}
