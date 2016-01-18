@@ -104,7 +104,7 @@ namespace Solaire {
             return sign ? value * -1 : value;
         }
 
-        static int64_t stringToDouble(const char* const aString, const int32_t aSize) throw() {
+        static double stringToDouble(const char* const aString, const int32_t aSize) throw() {
             //! \todo Support different bases
             int32_t decimal = -1;
             for(int32_t i = 0; i < aSize; ++i) {
@@ -115,9 +115,13 @@ namespace Solaire {
 
             const int32_t high = stringToSigned(aString, decimal);
             const uint32_t low = stringToUnsigned(aString + decimal + 1, aSize - (decimal + 1));
+            //! \bug Leading 0's after decimal place are lost
 
             double lowD = static_cast<double>(low);
-            while(lowD < 0.0) lowD /= 10.0;
+            while(lowD >= 1.0) {
+                lowD /= 10.0;
+            }
+
             return static_cast<double>(high) + lowD;
         }
 
