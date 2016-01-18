@@ -114,15 +114,19 @@ namespace Solaire {
             }
 
             const int32_t high = stringToSigned(aString, decimal);
-            const uint32_t low = stringToUnsigned(aString + decimal + 1, aSize - (decimal + 1));
-            //! \bug Leading 0's after decimal place are lost
+            if(decimal > 0) {
+                const uint32_t low = stringToUnsigned(aString + decimal + 1, aSize - (decimal + 1));
+                //! \bug Leading 0's after decimal place are lost
 
-            double lowD = static_cast<double>(low);
-            while(lowD >= 1.0) {
-                lowD /= 10.0;
+                double lowD = static_cast<double>(low);
+                while(lowD >= 1.0) {
+                    lowD /= 10.0;
+                }
+
+                return static_cast<double>(high) + lowD;
+            }else {
+                return static_cast<double>(high);
             }
-
-            return static_cast<double>(high) + lowD;
         }
 
         SOLAIRE_THREAD_LOCAL char STRING_TO_CSTRING_BUF[1024];
