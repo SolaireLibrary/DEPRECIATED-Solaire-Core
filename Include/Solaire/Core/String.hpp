@@ -366,6 +366,21 @@ namespace Solaire {
             return *this;
         };
 
+        String<T>& operator+=(float aValue) throw() {
+             return operator+=(static_cast<double>(aValue));
+        };
+
+        String<T>& operator+=(double aValue) throw() {
+            const int64_t high = aValue;
+            double low = aValue - high;
+            while(low - static_cast<double>(static_cast<uint64_t>(low)) > 0.000001) low *= 10.0;
+            String<T>& ref = *this;
+            ref += high;
+            ref += '.';
+            ref += static_cast<uint64_t>(low);
+            return ref;
+        };
+
         explicit operator uint64_t() const throw() {
             //! \todo Support different bases
             return Implementation::stringToUnsigned(Implementation::stringToCString(*this), this->size());
