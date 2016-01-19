@@ -274,7 +274,7 @@ namespace Solaire {
         }
 
         SOLAIRE_FORCE_INLINE operator const List<const T>&() const throw() {
-            return *reinterpret_cast<List<const T>*>(this);
+            return *reinterpret_cast<const List<const T>*>(this);
         }
 	};
 
