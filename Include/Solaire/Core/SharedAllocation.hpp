@@ -35,25 +35,78 @@
 
 namespace Solaire {
 
-	template<class T>
-	struct SharedObject {
-        AllocatorI& Allocator_;
-        T* Object;
-        uint16_t Count;
+    namespace Implementation {
+        template<class T>
+        static void SOLAIRE_EXPORT_CALL SharedObjectDestructor(void* const aObject) throw() {
+            static_cast<T*>(aObject)->~T();
+        }
 
-        SharedObject(AllocatorI& aAllocator, T* const aObject) :
-            Allocator_(aAllocator),
-            Object(aObject),
-            Count(0)
+        template<class T, class T2>
+        static constexpr bool isSharedCastable() throw() {
+            return
+                std::is_base_of<T, T2>::value ||
+                std::is_same<const T, T2>::value ||
+                std::is_same<T2, void>::value;
+
+        }
+    }
+
+
+
+    class SharedObject {
+    public:
+        typedef void (SOLAIRE_EXPORT_CALL *Destructor)(void* const);
+    private:
+        AllocatorI& mAllocator;
+        Destructor mDestructor;
+        void* mObject;
+        uint16_t mUsers;
+    public:
+        SharedObject(AllocatorI& aAllocator, void* const aObject, Destructor aDestructor) throw() :
+            mAllocator(aAllocator),
+            mDestructor(aDestructor),
+            mObject(aObject),
+            mUsers(0)
         {}
 
-        ~SharedObject() {
-            if(Object) {
-                Object->~T();
-                Allocator_.deallocate(Object);
+        ~SharedObject() throw() {
+            if(mObject != nullptr) {
+                mDestructor(mObject);
+                mAllocator.deallocate(mObject);
             }
         }
-	};
+
+        AllocatorI& getAllocator() const throw() {
+            return mAllocator;
+        }
+
+        uint16_t getUsers() const throw() {
+            return mUsers;
+        }
+
+        void* getPtr() throw() {
+            return mObject;
+        }
+
+        const void* getPtr() const throw() {
+            return mObject;
+        }
+
+        bool addUser() throw() {
+            ++mUsers;
+            return true;
+        }
+
+        bool removeUser() throw() {
+            if(mUsers == 0) return false;
+            if(mUsers == 1 && mObject != nullptr) {
+                mDestructor(mObject);
+                mAllocator.deallocate(mObject);
+                mAllocator.deallocate(this);
+            }
+            return true;
+        }
+    };
 
 	template<class T>
 	class SharedAllocation {
@@ -61,34 +114,22 @@ namespace Solaire {
 		template<class T2>
 		friend class SharedAllocation;
 	private:
-		SharedObject<T>* mObject;
-	private:
-		bool deleteObject() throw() {
-		    if(mObject == nullptr) return false;
-		    --mObject->Count;
-		    if(mObject->Count == 0) {
-                mObject->~SharedObject();
-                mObject->Allocator_.deallocate(mObject);
-		    }
-		    mObject = nullptr;
-		    return true;
-		}
-
+		SharedObject* mObject;
 	public:
 		SharedAllocation() throw() :
 			mObject(nullptr)
 		{}
 
 		SharedAllocation(AllocatorI& aAllocator, T* const aObject) throw() :
-			mObject(new(aAllocator.allocate(sizeof(SharedObject<T>))) SharedObject<T>(aAllocator, aObject))
+			mObject(new(aAllocator.allocate(sizeof(SharedObject))) SharedObject(aAllocator, aObject, Implementation::SharedObjectDestructor<T>))
 		{
-		    ++mObject->Count;
+		    mObject->addUser();
 		}
 
 		SharedAllocation(const SharedAllocation<T>& aOther) throw() :
 			mObject(aOther.mObject)
 		{
-			if(mObject) ++mObject->Count;
+			if(mObject) mObject->addUser();
 		}
 
 		SharedAllocation(SharedAllocation<T>&& aOther) throw() :
@@ -97,41 +138,49 @@ namespace Solaire {
 			aOther.mObject = nullptr;
 		}
 
-		/*template<class T2>
-		SharedAllocation(const SharedAllocation<T2>& aOther) throw() :
+		template<class T2, typename ENABLE = typename std::enable_if<Implementation::isSharedCastable<T,T2>()>::type>
+		explicit SharedAllocation(const SharedAllocation<T2>& aOther) throw() :
 			mObject(aOther.mObject)
 		{
-			++mObject->Count;
+			if(mObject) mObject->addUser();
 		}
 
-		template<class T2>
-		SharedAllocation(SharedAllocation<T2>&& aOther) throw() :
+		template<class T2, typename ENABLE = typename std::enable_if<Implementation::isSharedCastable<T,T2>()>::type>
+		explicit SharedAllocation(SharedAllocation<T2>&& aOther) throw() :
 			mObject(aOther.mObject)
 		{
 			aOther.mObject = nullptr;
-		}*/
-
-		~SharedAllocation() throw() {
-			deleteObject();
 		}
 
-		SharedAllocation& operator=(const SharedAllocation<T>& aOther) throw() {
-			deleteObject();
+		~SharedAllocation() throw() {
+			if(mObject) mObject->removeUser();
+		}
+
+		SharedAllocation<T>& operator=(const SharedAllocation<T>& aOther) throw() {
+			if(mObject) mObject->removeUser();
 			mObject = aOther.mObject;
-			if(mObject != nullptr) ++mObject->Count;
+			if(mObject) mObject->addUser();
 			return *this;
 		}
 
-		SharedAllocation& operator=(SharedAllocation<T>&& aOther) throw() {
+		SharedAllocation<T>& operator=(SharedAllocation<T>&& aOther) throw() {
 			swap(aOther);
 			return *this;
 		}
 
-		template<class T2>
-		SharedAllocation& operator=(const SharedAllocation<T2>& aOther) throw() {
-			deleteObject();
+		template<class T2, typename ENABLE = typename std::enable_if<Implementation::isSharedCastable<T,T2>()>::type>
+		SharedAllocation<T>& operator=(const SharedAllocation<T2>& aOther) throw() {
+			if(mObject) mObject->removeUser();
 			mObject = aOther.mObject;
-			++mObject->Count;
+			if(mObject) mObject->addUser();
+			return *this;
+		}
+
+		template<class T2, typename ENABLE = typename std::enable_if<Implementation::isSharedCastable<T,T2>()>::type>
+		SharedAllocation<T>& operator=(SharedAllocation<T2>&& aOther) throw() {
+			if(mObject) mObject->removeUser();
+			mObject = aOther.mObject;
+			aOther.mObject = nullptr;
 			return *this;
 		}
 
@@ -139,21 +188,12 @@ namespace Solaire {
 			std::swap(mObject, aOther.mObject);
 		}
 
-		T* releaseOwnership() throw() {
-			if(mObject == nullptr) return nullptr;
-			if(mObject->Count != 1) return nullptr;
-
-			T* const tmp = mObject->Object;
-			deleteObject();
-			return tmp;
-		}
-
 		AllocatorI& getAllocator() const throw() {
-			return mObject->Allocator_;
+			return mObject->getAllocator();
 		}
 
 		uint32_t getUserCount() const throw() {
-			return mObject == nullptr ? 0 : mObject->Count;
+			return mObject ? mObject->getUsers() : 0;
 		}
 
 		operator bool() const throw() {
@@ -161,11 +201,11 @@ namespace Solaire {
 		}
 
 		T& operator*() const throw() {
-			return *(mObject->Object);
+			return *operator->();
 		}
 
 		T* operator->() const throw() {
-			return mObject == nullptr ? nullptr : mObject->Object;
+			return mObject ? static_cast<T*>(mObject->getPtr()) : nullptr;
 		}
 
 		template<class T2>
