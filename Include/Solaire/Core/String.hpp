@@ -38,6 +38,37 @@ namespace Solaire {
 	using StringConstant = StaticContainer<T>;
 
     namespace Implementation {
+
+        template<class T, size_t LENGTH>
+        static bool eqCString(const StringConstant<T>& aLeft, const char(&aRight)[LENGTH]) throw() {
+            if(aLeft.size() != LENGTH) return false;
+            if(aLeft.isContiguous() && (std::is_same<T, char>::value || std::is_same<T, const char>::value)) {
+                return std::memcmp(&aLeft[0], aRight, LENGTH) == 0;
+            }else {
+                const auto end = aLeft.end();
+                const char* j = aRight;
+                for(auto i = aLeft.begin(); i != end; ++i, ++j) {
+                    if(*i != *j) return false;
+                }
+                return true;
+            }
+        };
+
+        template<class T, size_t LENGTH>
+        static bool neqCString(const StringConstant<T>& aLeft, const char(&aRight)[LENGTH]) throw() {
+            if(aLeft.size() != LENGTH) return false;
+            if(aLeft.isContiguous() && (std::is_same<T, char>::value || std::is_same<T, const char>::value)) {
+                return std::memcmp(&aLeft[0], aRight, LENGTH) != 0;
+            }else {
+                const auto end = aLeft.end();
+                const char* j = aRight;
+                for(auto i = aLeft.begin(); i != end; ++i, ++j) {
+                    if(*i != *j) return true;
+                }
+                return false;
+            }
+        };
+
         static constexpr char STRING_NUMERIC_CHARS[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
         static constexpr uint64_t constexprPower(const uint64_t aValue, const uint64_t aExponent) {
@@ -276,6 +307,17 @@ namespace Solaire {
             return Implementation::stringToDouble(Implementation::stringToCString(*this), this->size());
         }
 
+        template<size_t LENGTH>
+        bool operator==(const char(&aString)[LENGTH]) const throw() {
+            return Implementation::eqCString(*this, aString);
+        }
+
+
+        template<size_t LENGTH>
+        bool operator!=(const char(&aString)[LENGTH]) const throw() {
+            return Implementation::eqCString(*this, aString);
+        }
+
         // Inherited from StaticContainer
 
         bool SOLAIRE_EXPORT_CALL isContiguous() const throw() override {
@@ -425,6 +467,25 @@ namespace Solaire {
 
         explicit operator double() const throw() {
             return Implementation::stringToDouble(Implementation::stringToCString(*this), this->size());
+        }
+
+        template<size_t LENGTH>
+        bool operator==(const char(&aString)[LENGTH]) const throw() {
+            return Implementation::eqCString(*this, aString);
+        }
+
+
+        template<size_t LENGTH>
+        bool operator!=(const char(&aString)[LENGTH]) const throw() {
+            return Implementation::eqCString(*this, aString);
+        }
+
+        bool operator==(const String<T>& aString) const throw() {
+            return static_cast<const StaticContainer<const char>&>(*this) == static_cast<const StaticContainer<const char>&>(aString);
+        }
+
+        bool operator!=(const String<T>& aString) const throw() {
+            return static_cast<const StaticContainer<const char>&>(*this) != static_cast<const StaticContainer<const char>&>(aString);
         }
 
 	};
