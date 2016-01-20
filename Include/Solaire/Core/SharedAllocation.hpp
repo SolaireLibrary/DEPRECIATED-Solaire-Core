@@ -167,12 +167,32 @@ namespace Solaire {
 			return mObject != nullptr;
 		}
 
-		T& operator*() const throw() {
-			return *operator->();
+		T* get() throw() {
+		    return mObject ? static_cast<T*>(mObject->getPtr()) : nullptr;
 		}
 
-		T* operator->() const throw() {
-			return mObject ? static_cast<T*>(mObject->getPtr()) : nullptr;
+		const T* get() const throw() {
+		    return mObject ? static_cast<const T*>(mObject->getPtr()) : nullptr;
+		}
+
+        template<class T2 = T, typename ENABLE = typename std::enable_if<! std::is_same<T2, void>::value>::type>
+		T& operator*() throw() {
+			return *get();
+		}
+
+        template<class T2 = T, typename ENABLE = typename std::enable_if<! std::is_same<T2, void>::value>::type>
+		T* operator->() throw() {
+			return get();
+		}
+
+        template<class T2 = T, typename ENABLE = typename std::enable_if<! std::is_same<T2, void>::value>::type>
+		const T& operator*() const throw() {
+			return *get();
+		}
+
+        template<class T2 = T, typename ENABLE = typename std::enable_if<! std::is_same<T2, void>::value>::type>
+		const T* operator->() const throw() {
+			return get();
 		}
 
 		template<class T2>
@@ -187,11 +207,14 @@ namespace Solaire {
 
 		template<class T2, typename ENABLE = typename std::enable_if<
             std::is_base_of<T, T2>::value ||
-            std::is_same<const T, T2>::value ||
             std::is_same<T2, void>::value
         >::type>
 		explicit operator SharedAllocation<T2>() const throw() {
 			return SharedAllocation<T2>(mObject);
+		}
+
+		operator SharedAllocation<const T>() const throw() {
+			return SharedAllocation<const T>(mObject);
 		}
 	};
 }
