@@ -353,9 +353,9 @@ namespace Solaire {
             const int32_t length = aString.size();
             if(aString.isContiguous()) {
                 const T* const ptr = &aString[0];
-                for(int32_t i = 0; i < length-1; ++i) this->pushBack(ptr[i]);
+                for(int32_t i = 0; i < length; ++i) this->pushBack(ptr[i]);
             } else {
-                for(int32_t i = 0; i < length-1; ++i) this->pushBack(aString[i]);
+                for(int32_t i = 0; i < length; ++i) this->pushBack(aString[i]);
             }
             return *this;
         }
