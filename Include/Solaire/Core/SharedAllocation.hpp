@@ -42,10 +42,10 @@ namespace Solaire {
         }
 
         template<class T, class T2>
-        static constexpr bool isSharedCastable() throw() {
+        static constexpr bool isSharedCastableTo() throw() {
             return
-                std::is_base_of<T, T2>::value ||
-                std::is_same<const T, T2>::value ||
+                std::is_base_of<T2, T>::value ||
+                std::is_same<T, const T2>::value ||
                 std::is_same<T2, void>::value;
 
         }
@@ -138,14 +138,14 @@ namespace Solaire {
 			aOther.mObject = nullptr;
 		}
 
-		template<class T2, typename ENABLE = typename std::enable_if<Implementation::isSharedCastable<T,T2>()>::type>
+		template<class T2, typename ENABLE = typename std::enable_if<Implementation::isSharedCastableTo<T2,T>()>::type>
 		explicit SharedAllocation(const SharedAllocation<T2>& aOther) throw() :
 			mObject(aOther.mObject)
 		{
 			if(mObject) mObject->addUser();
 		}
 
-		template<class T2, typename ENABLE = typename std::enable_if<Implementation::isSharedCastable<T,T2>()>::type>
+		template<class T2, typename ENABLE = typename std::enable_if<Implementation::isSharedCastableTo<T2,T>()>::type>
 		explicit SharedAllocation(SharedAllocation<T2>&& aOther) throw() :
 			mObject(aOther.mObject)
 		{
@@ -168,7 +168,7 @@ namespace Solaire {
 			return *this;
 		}
 
-		template<class T2, typename ENABLE = typename std::enable_if<Implementation::isSharedCastable<T,T2>()>::type>
+		template<class T2, typename ENABLE = typename std::enable_if<Implementation::isSharedCastableTo<T2,T>()>::type>
 		SharedAllocation<T>& operator=(const SharedAllocation<T2>& aOther) throw() {
 			if(mObject) mObject->removeUser();
 			mObject = aOther.mObject;
@@ -176,7 +176,7 @@ namespace Solaire {
 			return *this;
 		}
 
-		template<class T2, typename ENABLE = typename std::enable_if<Implementation::isSharedCastable<T,T2>()>::type>
+		template<class T2, typename ENABLE = typename std::enable_if<Implementation::isSharedCastableTo<T2,T>()>::type>
 		SharedAllocation<T>& operator=(SharedAllocation<T2>&& aOther) throw() {
 			if(mObject) mObject->removeUser();
 			mObject = aOther.mObject;
