@@ -40,15 +40,6 @@ namespace Solaire {
         static void SOLAIRE_EXPORT_CALL SharedObjectDestructor(void* const aObject) throw() {
             static_cast<T*>(aObject)->~T();
         }
-
-        template<class T, class T2>
-        static constexpr bool isSharedCastableTo() throw() {
-            return
-                std::is_base_of<T2, T>::value ||
-                std::is_same<T, const T2>::value ||
-                std::is_same<T2, void>::value;
-
-        }
     }
 
 
@@ -115,6 +106,12 @@ namespace Solaire {
 		friend class SharedAllocation;
 	private:
 		SharedObject* mObject;
+    private:
+		SharedAllocation(SharedObject* const aObject) throw() :
+			mObject(aObject)
+		{
+		    if(mObject) mObject->addUser();
+		}
 	public:
 		SharedAllocation() throw() :
 			mObject(nullptr)
@@ -138,20 +135,6 @@ namespace Solaire {
 			aOther.mObject = nullptr;
 		}
 
-		template<class T2, typename ENABLE = typename std::enable_if<Implementation::isSharedCastableTo<T2,T>()>::type>
-		explicit SharedAllocation(const SharedAllocation<T2>& aOther) throw() :
-			mObject(aOther.mObject)
-		{
-			if(mObject) mObject->addUser();
-		}
-
-		template<class T2, typename ENABLE = typename std::enable_if<Implementation::isSharedCastableTo<T2,T>()>::type>
-		explicit SharedAllocation(SharedAllocation<T2>&& aOther) throw() :
-			mObject(aOther.mObject)
-		{
-			aOther.mObject = nullptr;
-		}
-
 		~SharedAllocation() throw() {
 			if(mObject) mObject->removeUser();
 		}
@@ -165,22 +148,6 @@ namespace Solaire {
 
 		SharedAllocation<T>& operator=(SharedAllocation<T>&& aOther) throw() {
 			swap(aOther);
-			return *this;
-		}
-
-		template<class T2, typename ENABLE = typename std::enable_if<Implementation::isSharedCastableTo<T2,T>()>::type>
-		SharedAllocation<T>& operator=(const SharedAllocation<T2>& aOther) throw() {
-			if(mObject) mObject->removeUser();
-			mObject = aOther.mObject;
-			if(mObject) mObject->addUser();
-			return *this;
-		}
-
-		template<class T2, typename ENABLE = typename std::enable_if<Implementation::isSharedCastableTo<T2,T>()>::type>
-		SharedAllocation<T>& operator=(SharedAllocation<T2>&& aOther) throw() {
-			if(mObject) mObject->removeUser();
-			mObject = aOther.mObject;
-			aOther.mObject = nullptr;
 			return *this;
 		}
 
@@ -216,6 +183,15 @@ namespace Solaire {
 		template<class T2>
 		bool operator!=(const SharedAllocation<T2> aOther) const throw() {
 		    return mObject != aOther.mObject;
+		}
+
+		template<class T2, typename ENABLE = typename std::enable_if<
+            std::is_base_of<T, T2>::value ||
+            std::is_same<const T, T2>::value ||
+            std::is_same<T2, void>::value
+        >::type>
+		explicit operator SharedAllocation<T2>() const throw() {
+			return SharedAllocation<T2>(mObject);
 		}
 	};
 }
