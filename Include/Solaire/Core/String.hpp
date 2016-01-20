@@ -348,6 +348,18 @@ namespace Solaire {
             return *this;
         }
 
+        String<T>& operator=(const StaticContainer<const T>& aString) {
+            this->clear();
+            const int32_t length = aString.size();
+            if(aString.isContiguous()) {
+                const T* const ptr = &aString[0];
+                for(int32_t i = 0; i < length-1; ++i) this->pushBack(ptr[i]);
+            } else {
+                for(int32_t i = 0; i < length-1; ++i) this->pushBack(aString[i]);
+            }
+            return *this;
+        }
+
         template<size_t LENGTH>
         String<T>& operator+=(const T(&aString)[LENGTH]) throw() {
             for(int32_t i = 0; i < LENGTH; ++i) this->pushBack(aString[i]);
